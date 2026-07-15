@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <span class="nav-brand"></span>
+        <ul class="nav-tabs">
+            <li><button class="nav-tab active" data-page="home">Home</button></li>
+            <li><button class="nav-tab" data-page="notes">Learning</button></li>
+            <li><button class="nav-tab" data-page="writings">Writings</button></li>
+        </ul>
+    </nav>
+
+    <main class="pages-container">
+
+        <!-- ====== Home ====== -->
+        <section class="page active" id="page-home">
+            <div class="page-inner">
+                <div class="home-avatar">
+                    <img id="avatar-img" alt="">
+                    <div class="avatar-fallback"></div>
+                </div>
+                <h1 class="home-name" id="home-name"></h1>
+                <p class="home-bio" id="home-bio"></p>
+                <div class="home-experience" id="home-experience"></div>
+                <div class="home-links" id="home-links"></div>
+            </div>
+        </section>
+
+        <!-- ====== Learning ====== -->
+        <section class="page" id="page-notes">
+            <div class="page-inner">
+                <h2 class="page-title">Something Interesting</h2>
+                <h3 class="shelf-section">Notes</h3>
+                <div class="card-grid" id="notes-grid"></div>
+                <h3 class="shelf-section">Tutoring</h3>
+                <div class="card-grid" id="tutoring-grid"></div>
+            </div>
+        </section>
+
+        <!-- ====== Writings ====== -->
+        <section class="page" id="page-writings">
+            <div class="page-inner">
+                <h2 class="page-title">Writings</h2>
+                <div class="card-grid" id="writings-grid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Password modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">Enter password</h3>
+            <p class="modal-label" id="modal-label"></p>
+            <input type="password" class="modal-input" id="modal-password" placeholder="Password" autocomplete="off">
+            <p class="modal-error" id="modal-error"></p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btn-cancel">Cancel</button>
+                <button class="btn-confirm" id="btn-confirm">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container"><p></p></div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
