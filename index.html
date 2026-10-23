@@ -17,7 +17,7 @@
         <ul class="nav-tabs">
             <li><button class="nav-tab active" data-page="home">Home</button></li>
             <li><button class="nav-tab" data-page="notes">Learning</button></li>
-            <li><button class="nav-tab" data-page="writings">Writings</button></li>
+            <li><button class="nav-tab" data-page="blog">Blog</button></li>
         </ul>
     </nav>
 
@@ -48,11 +48,18 @@
             </div>
         </section>
 
-        <!-- ====== Writings ====== -->
-        <section class="page" id="page-writings">
+        <!-- ====== Blog ====== -->
+        <section class="page" id="page-blog">
             <div class="page-inner">
-                <h2 class="page-title">Writings</h2>
-                <div class="card-grid" id="writings-grid"></div>
+                <h2 class="page-title">Blog</h2>
+                <div class="blog-toolbar">
+                    <label for="blog-sort">Sort by date</label>
+                    <select id="blog-sort">
+                        <option value="desc">Newest first</option>
+                        <option value="asc">Oldest first</option>
+                    </select>
+                </div>
+                <div class="blog-list" id="blog-list"></div>
             </div>
         </section>
 

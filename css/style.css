@@ -79,9 +79,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     margin: 0 auto;
     padding: 80px 24px 64px;
 }
-/* Notes & Writings need more width for card grid */
+/* Notes & Blog need a wider layout */
 #page-notes .page-inner,
-#page-writings .page-inner {
+#page-blog .page-inner {
     max-width: var(--max-grid);
 }
 
@@ -272,6 +272,65 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     font-weight: 500;
 }
 
+/* ===== Blog list ===== */
+.blog-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    max-width: var(--max-grid);
+    margin: -12px auto 20px;
+}
+.blog-toolbar label {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+.blog-toolbar select {
+    padding: 7px 32px 7px 14px;
+    font: inherit;
+    font-size: 0.82rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    cursor: pointer;
+    outline: none;
+}
+.blog-toolbar select:focus { border-color: var(--color-accent); }
+
+.blog-list {
+    max-width: var(--max-grid);
+    margin: 0 auto;
+}
+.blog-row {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: center;
+    padding: 22px 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+.blog-row:first-child { border-top: 1px solid var(--color-border); }
+.blog-date {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+.blog-body h3 {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.blog-body p {
+    font-size: 0.9rem;
+    color: var(--color-text-mid);
+    line-height: 1.55;
+    margin-bottom: 10px;
+}
+.blog-body .card-tags { margin-bottom: 0; }
+.blog-row .btn-download { justify-self: end; white-space: nowrap; }
+
 /* Download button */
 .btn-download {
     display: inline-flex;
@@ -314,4 +373,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     .exp-item { flex-direction: column; gap: 2px; }
     .exp-year { width: auto; }
     .card-grid { grid-template-columns: 1fr; }
+    .blog-row { grid-template-columns: 1fr; gap: 6px; padding: 18px 4px; }
+    .blog-row .btn-download { justify-self: start; margin-top: 6px; }
 }

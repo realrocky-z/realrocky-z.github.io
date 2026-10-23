@@ -110,11 +110,41 @@
     }
 })();
 
-// ===== Render Writings page from CONFIG =====
+// ===== Render Blog page from CONFIG =====
 (function () {
-    var writingsGrid = document.getElementById('writings-grid');
-    if (writingsGrid && CONFIG.writings) {
-        writingsGrid.innerHTML = renderCards(CONFIG.writings);
+    var list = document.getElementById('blog-list');
+    var select = document.getElementById('blog-sort');
+    if (!list || !CONFIG.blog) return;
+
+    function render(order) {
+        var items = CONFIG.blog.slice().sort(function (a, b) {
+            var da = a.date || '';
+            var db = b.date || '';
+            if (da === db) return 0;
+            var cmp = da < db ? -1 : 1;
+            return order === 'asc' ? cmp : -cmp;
+        });
+
+        var html = '';
+        items.forEach(function (item) {
+            var tags = '';
+            item.tags.forEach(function (t) { tags += '<span>' + escapeHTML(t) + '</span>'; });
+            html += '<article class="blog-row">'
+                  + '<time class="blog-date" datetime="' + escapeAttr(item.date || '') + '">' + escapeHTML(item.date || '—') + '</time>'
+                  + '<div class="blog-body">'
+                  + '<h3>' + escapeHTML(item.title) + '</h3>'
+                  + '<p>' + escapeHTML(item.desc) + '</p>'
+                  + '<div class="card-tags">' + tags + '</div>'
+                  + '</div>'
+                  + '<button class="btn-download" data-file="' + escapeAttr(item.file) + '" data-label="' + escapeAttr(item.title) + '">Download</button>'
+                  + '</article>';
+        });
+        list.innerHTML = html;
+    }
+
+    render(select ? select.value : 'desc');
+    if (select) {
+        select.addEventListener('change', function () { render(this.value); });
     }
 })();
 

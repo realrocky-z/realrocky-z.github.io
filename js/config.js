@@ -68,10 +68,11 @@ var CONFIG = {
         }
     ],
 
-    // ---- Writings 页面 ----
-    writings: [
+    // ---- Blog 页面（date 格式 YYYY-MM-DD） ----
+    blog: [
         {
             title: "Reading1",
+            date:  "2026-10-22",
             desc:  "An essay",
             tags:  ["Essay"],
             file:  "files/quiet-design.pdf",
@@ -79,6 +80,7 @@ var CONFIG = {
         },
         {
             title: "Reading2",
+            date:  "2026-10-23",
             desc:  "Will record something later...",
             tags:  ["Whatever"],
             file:  "files/typography-notes.pdf",
