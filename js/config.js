@@ -13,6 +13,7 @@ var CONFIG = {
 
     // ---- 经历（按时间倒序） ----
     experience: [
+        { year: "Prospective", desc: "Master's student in Statistics, School of Data Science and Engineering, Beijing Normal University"},
         { year: "2023 — Now", desc: "Department of Statistics, Beijing Normal University" },
         { year: "2020 — 2023", desc: "Shenzhen Middle School" }
     ],
@@ -23,9 +24,6 @@ var CONFIG = {
         { type: "email",     href: "realrocky0103@outlook.com", label: "Email" },
         { type: "phone",     href: "tel:+86xxxxxxxxxxx",  label: "+86 xxx-xxxx-xxxx" }
     ],
-
-    // ---- 下载密码 ----
-    password: "everythingwillbeokay0103",
 
     // ---- Learning 页面：笔记 ----
     notes: [

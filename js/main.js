@@ -118,70 +118,20 @@
     }
 })();
 
-// ===== Password-protected downloads =====
+// ===== Downloads (PDFs are password-protected at file level) =====
 (function () {
-    var PASSWORD = CONFIG.password;
-
-    var overlay = document.getElementById('modal-overlay');
-    var label = document.getElementById('modal-label');
-    var input = document.getElementById('modal-password');
-    var error = document.getElementById('modal-error');
-    var btnCancel = document.getElementById('btn-cancel');
-    var btnConfirm = document.getElementById('btn-confirm');
-
-    var pendingFile = null;
-    var pendingLabel = null;
-
     document.addEventListener('click', function (e) {
         var btn = e.target.closest('.btn-download');
         if (!btn) return;
         e.preventDefault();
-        pendingFile = btn.getAttribute('data-file');
-        pendingLabel = btn.getAttribute('data-label') || pendingFile;
-        label.textContent = 'File: ' + pendingLabel;
-        input.value = '';
-        input.classList.remove('wrong');
-        error.textContent = '';
-        overlay.classList.add('open');
-        setTimeout(function () { input.focus(); }, 150);
-    });
-
-    function closeModal() {
-        overlay.classList.remove('open');
-        pendingFile = null;
-        pendingLabel = null;
-    }
-
-    function doDownload() {
-        var pw = input.value.trim();
-        if (!pw) {
-            error.textContent = 'Please enter a password.';
-            input.classList.add('wrong');
-            return;
-        }
-        if (pw !== PASSWORD) {
-            error.textContent = 'Wrong password. Try again.';
-            input.classList.add('wrong');
-            input.value = '';
-            input.focus();
-            return;
-        }
         var a = document.createElement('a');
-        a.href = pendingFile;
+        a.href = btn.getAttribute('data-file');
         a.download = '';
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        closeModal();
-    }
-
-    btnCancel.addEventListener('click', closeModal);
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') doDownload(); });
-    input.addEventListener('input', function () { input.classList.remove('wrong'); error.textContent = ''; });
-    btnConfirm.addEventListener('click', doDownload);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+    });
 })();
 
 // ===== Helpers =====

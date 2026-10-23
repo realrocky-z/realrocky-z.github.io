@@ -1,0 +1,331 @@
+/* ===== Easter Egg: Goose & Glove ===== */
+
+/* --- Goose --- */
+.goose {
+    position: fixed;
+    z-index: 150;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scaleX(var(--facing, 1));
+    will-change: left, top;
+    display: none;
+}
+.goose.active {
+    display: block;
+    animation: gooseEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes gooseEnter {
+    from { transform: translate(-50%, -50%) scaleX(var(--facing, 1)) scale(0); opacity: 0; }
+    to   { transform: translate(-50%, -50%) scaleX(var(--facing, 1)) scale(1); opacity: 1; }
+}
+
+.goose-sprite {
+    font-size: 52px;
+    line-height: 1;
+    display: block;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));
+    transition: filter 0.3s;
+}
+
+.goose-shadow {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34px;
+    height: 7px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 50%;
+    transition: width 0.3s, height 0.3s, opacity 0.3s;
+}
+
+/* --- State animations --- */
+.goose.walking .goose-sprite {
+    animation: waddle 0.5s ease-in-out infinite;
+}
+.goose.idle .goose-sprite {
+    animation: idleBreathe 2.4s ease-in-out infinite;
+}
+.goose.alert .goose-sprite {
+    animation: alertWaddle 0.28s ease-in-out infinite;
+    filter: drop-shadow(2px 4px 8px rgba(190,85,35,0.22)) brightness(1.06);
+}
+.goose.caught .goose-sprite {
+    animation: struggle 0.1s ease-in-out infinite;
+    filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.22)) brightness(1.08);
+}
+.goose.caught .goose-shadow {
+    opacity: 0.4;
+    width: 26px;
+    height: 5px;
+}
+.goose.fleeing .goose-sprite {
+    animation: fleeWaddle 0.2s ease-in-out infinite;
+    filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.18));
+}
+
+@keyframes waddle {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%      { transform: translateY(-7px) rotate(-4deg); }
+    75%      { transform: translateY(-7px) rotate(4deg); }
+}
+
+@keyframes idleBreathe {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30%      { transform: translateY(-3px) scale(1.03); }
+    60%      { transform: translateY(0) scale(1); }
+    85%      { transform: translateY(-1px) scale(1.01); }
+}
+
+@keyframes alertWaddle {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    25%      { transform: translateY(-9px) rotate(-7deg); }
+    50%      { transform: translateY(-4px) rotate(-1deg); }
+    75%      { transform: translateY(-9px) rotate(-6deg); }
+}
+
+@keyframes struggle {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25%      { transform: translate(3px, -3px) rotate(7deg); }
+    50%      { transform: translate(-3px, 2px) rotate(-5deg); }
+    75%      { transform: translate(-1px, -1px) rotate(9deg); }
+}
+
+@keyframes fleeWaddle {
+    0%, 100% { transform: translateY(0) rotate(-7deg); }
+    50%      { transform: translateY(-10px) rotate(-3deg); }
+}
+
+/* Final catch fade-out */
+.goose.fading-out .goose-sprite {
+    animation: gooseVanish 1.2s ease-in forwards;
+    pointer-events: none;
+}
+.goose.fading-out .goose-shadow {
+    opacity: 0;
+    transition: opacity 0.6s;
+}
+@keyframes gooseVanish {
+    0%   { transform: scale(1) rotate(0deg); opacity: 1; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15)); }
+    30%  { transform: scale(1.3) rotate(-15deg); opacity: 0.8; filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2)) brightness(1.3); }
+    60%  { transform: scale(0.6) rotate(30deg); opacity: 0.4; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.1)) brightness(2); }
+    100% { transform: scale(0) rotate(60deg); opacity: 0; filter: drop-shadow(0 0 0 transparent) brightness(3); }
+}
+
+/* --- Speech bubble --- */
+.goose-speech {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(var(--fix, 1)) scale(0);
+    background: #fff;
+    border: 2px solid #3b2f26;
+    border-radius: 12px;
+    padding: 5px 14px;
+    font-family: var(--font-sans, "Inter", sans-serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: #3b2f26;
+    white-space: nowrap;
+    opacity: 0;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+    pointer-events: none;
+}
+.goose-speech::after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-top-color: #3b2f26;
+}
+.goose-speech.show {
+    transform: translateX(-50%) scaleX(var(--fix, 1)) scale(1);
+    opacity: 1;
+}
+
+/* --- Cursor glove --- */
+.cursor-glove {
+    position: fixed;
+    z-index: 999;
+    font-size: 34px;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s;
+    filter: drop-shadow(1px 3px 5px rgba(0,0,0,0.35));
+    will-change: left, top;
+}
+.cursor-glove.visible {
+    animation: glovePulse 0.7s ease-in-out infinite;
+}
+@keyframes glovePulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
+}
+
+/* --- Summoned glove (double-click) --- */
+.glove {
+    position: fixed;
+    z-index: 155;
+    font-size: 38px;
+    line-height: 1;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));
+    animation: glovePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: left, top;
+}
+.glove.fading {
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.glove.grabbing {
+    animation: gloveGrab 0.25s ease-out forwards;
+    filter: drop-shadow(2px 4px 12px rgba(0,0,0,0.3));
+}
+.glove.releasing {
+    animation: gloveRelease 0.35s ease-in forwards;
+}
+
+@keyframes glovePop {
+    from { transform: translate(-50%, -50%) scale(0) rotate(-40deg); opacity: 0; }
+    to   { transform: translate(-50%, -50%) scale(1) rotate(0deg);    opacity: 1; }
+}
+@keyframes gloveGrab {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    40%  { transform: translate(-50%, -50%) scale(1.4); }
+    100% { transform: translate(-50%, -50%) scale(1.12); }
+}
+@keyframes gloveRelease {
+    to { transform: translate(-50%, -50%) scale(0) rotate(40deg); opacity: 0; }
+}
+
+/* --- Feather particles --- */
+.feathers-container {
+    position: fixed;
+    inset: 0;
+    z-index: 160;
+    pointer-events: none;
+}
+.feather {
+    position: absolute;
+    width: 12px;
+    height: 16px;
+    background: #faf7f2;
+    border: 1px solid #e6ded2;
+    border-radius: 60% 15% 60% 25%;
+    animation: featherBurst 0.6s ease-out forwards;
+}
+@keyframes featherBurst {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(0.5);
+        opacity: 0.85;
+    }
+    100% {
+        transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.15);
+        opacity: 0;
+    }
+}
+
+/* ================================================================
+   TOGGLE SWITCH (top-right corner)
+   ================================================================ */
+.goose-toggle {
+    position: fixed;
+    top: 68px;
+    right: 32px;
+    z-index: 180;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.goose-toggle-label {
+    font-family: var(--font-sans, "Inter", sans-serif);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    transition: color 0.25s, font-size 0.25s, transform 0.25s;
+}
+.goose-toggle-label.stage-1 {
+    color: var(--color-accent);
+    font-size: 0.92rem;
+}
+.goose-toggle-label.stage-2 {
+    color: #d4472a;
+    font-size: 1.05rem;
+    animation: labelShake 0.45s ease;
+}
+@keyframes labelShake {
+    0%, 100% { transform: rotate(0); }
+    15%      { transform: rotate(-10deg); }
+    35%      { transform: rotate(10deg); }
+    55%      { transform: rotate(-6deg); }
+    75%      { transform: rotate(6deg); }
+}
+
+.goose-toggle-switch {
+    width: 42px;
+    height: 24px;
+    background: #d5cfc8;
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.35s;
+    flex-shrink: 0;
+}
+.goose-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.goose-toggle.active .goose-toggle-switch {
+    background: var(--color-accent);
+}
+.goose-toggle.active .goose-toggle-thumb {
+    transform: translateX(18px);
+}
+.goose-toggle.active .goose-toggle-label {
+    color: var(--color-accent);
+}
+
+.goose-toggle-toast {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: #3b2f26;
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-family: var(--font-sans, "Inter", sans-serif);
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(8px) scale(0.85);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.goose-toggle-toast::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    right: 14px;
+    border: 6px solid transparent;
+    border-bottom-color: #3b2f26;
+}
+.goose-toggle-toast.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
