@@ -6,7 +6,7 @@ var CONFIG = {
 
     // ---- 基本信息 ----
     name: "Ruihong Zhong",
-    bio: "Student at Beijing Normal University, majoring in applied statistics. Interested in data science, deep learning, LLMs and AI. Passionate about learning and sharing knowledge. Hobbies include reading, music, anime, and exploring new technologies.",
+    bio: "Student at Beijing Normal University, majoring in applied statistics. Interested in data science, deep learning, LLMs and AI. Passionate about learning and sharing knowledge. Hobbies include reading, music, anime, and exploring new technologies. Research Fields: Bayesian Computation, MCMC",
 
     // ---- 头像（放到 assets/ 文件夹） ----
     avatar: "assets/avatar.png",
