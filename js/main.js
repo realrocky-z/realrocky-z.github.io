@@ -21,6 +21,14 @@
     });
 })();
 
+// ===== Open page from URL hash (index.html#blog) =====
+(function () {
+    var page = (location.hash || '').replace('#', '');
+    if (!page) return;
+    var tab = document.querySelector('.nav-tab[data-page="' + page + '"]');
+    if (tab) tab.click();
+})();
+
 // ===== Render home page from CONFIG =====
 (function () {
     var C = CONFIG;
@@ -110,17 +118,23 @@
     }
 })();
 
-// ===== Render Blog page from CONFIG =====
+// ===== Render Blog page from blog/posts.js =====
 (function () {
     var list = document.getElementById('blog-list');
     var select = document.getElementById('blog-sort');
-    if (!list || !CONFIG.blog) return;
+    if (!list) return;
+
+    var posts = window.BLOG_POSTS || [];
+    if (!posts.length) {
+        list.innerHTML = '<p class="blog-empty">No posts yet.</p>';
+        return;
+    }
 
     function render(order) {
-        var items = CONFIG.blog.slice().sort(function (a, b) {
+        var items = posts.slice().sort(function (a, b) {
             var da = a.date || '';
             var db = b.date || '';
-            if (da === db) return 0;
+            if (da === db) return a.title < b.title ? -1 : 1;
             var cmp = da < db ? -1 : 1;
             return order === 'asc' ? cmp : -cmp;
         });
@@ -128,7 +142,7 @@
         var html = '';
         items.forEach(function (item) {
             var tags = '';
-            item.tags.forEach(function (t) { tags += '<span>' + escapeHTML(t) + '</span>'; });
+            (item.tags || []).forEach(function (t) { tags += '<span>' + escapeHTML(t) + '</span>'; });
             html += '<article class="blog-row">'
                   + '<time class="blog-date" datetime="' + escapeAttr(item.date || '') + '">' + escapeHTML(item.date || '—') + '</time>'
                   + '<div class="blog-body">'
@@ -136,7 +150,7 @@
                   + '<p>' + escapeHTML(item.desc) + '</p>'
                   + '<div class="card-tags">' + tags + '</div>'
                   + '</div>'
-                  + '<button class="btn-download" data-file="' + escapeAttr(item.file) + '" data-label="' + escapeAttr(item.title) + '">Download</button>'
+                  + '<a class="btn-download btn-view" href="' + escapeAttr(item.url) + '" target="_blank" rel="noopener">View</a>'
                   + '</article>';
         });
         list.innerHTML = html;
@@ -152,7 +166,7 @@
 (function () {
     document.addEventListener('click', function (e) {
         var btn = e.target.closest('.btn-download');
-        if (!btn) return;
+        if (!btn || btn.classList.contains('btn-view')) return;
         e.preventDefault();
         var a = document.createElement('a');
         a.href = btn.getAttribute('data-file');

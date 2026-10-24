@@ -68,24 +68,7 @@ var CONFIG = {
         }
     ],
 
-    // ---- Blog 页面（date 格式 YYYY-MM-DD） ----
-    blog: [
-        {
-            title: "Reading1",
-            date:  "2026-10-22",
-            desc:  "An essay",
-            tags:  ["Essay"],
-            file:  "files/quiet-design.pdf",
-            image: "assets/writing-1.jpg"
-        },
-        {
-            title: "Reading2",
-            date:  "2026-10-23",
-            desc:  "Will record something later...",
-            tags:  ["Whatever"],
-            file:  "files/typography-notes.pdf",
-            image: "assets/writing-2.jpg"
-        }
-    ]
+    // ---- Blog 页面 ----
+    // 文章放在 blog/*.md（YAML 头部），构建时自动生成文章页和列表。
 
 };
