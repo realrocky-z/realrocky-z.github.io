@@ -1,12 +1,31 @@
 /* ===== 文章页 ===== */
+.post-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.nav-back,
+.nav-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    color: var(--color-text-muted);
+    border-radius: 20px;
+    transition: color 0.2s, background 0.2s;
+}
 .nav-back {
+    gap: 6px;
+    padding: 0 14px 0 12px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-muted);
-    padding: 6px 14px;
-    border-radius: 20px;
 }
-.nav-back:hover { color: var(--color-accent); background: var(--color-tag-bg); }
+.nav-home { width: 32px; }
+.nav-back:hover,
+.nav-home:hover { color: var(--color-accent); background: var(--color-tag-bg); }
+.nav-back svg,
+.nav-home svg { width: 16px; height: 16px; }
+.nav-home svg { width: 17px; height: 17px; }
 
 .post-main {
     max-width: 780px;
