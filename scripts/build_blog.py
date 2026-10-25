@@ -81,7 +81,8 @@ def protect(text):
         if i % 2 == 1:
             out.append(chunk)
             continue
-        chunk = re.sub(r"`[^`\n]+`", lambda m: token("CODE", m.group(0)), chunk)
+        chunk = re.sub(r"(?<!`)(`+)(?!`)([^\n]+?)(?<!`)\1(?!`)",
+                       lambda m: token("CODE", m.group(2)), chunk)
         chunk = re.sub(r"\$\$(.+?)\$\$", lambda m: token("DMATH", m.group(1)), chunk, flags=re.S)
         chunk = re.sub(r"(?<!\\)\$([^$\n]+?)(?<!\\)\$", lambda m: token("IMATH", m.group(1)), chunk)
         out.append(chunk)
@@ -95,7 +96,7 @@ def restore(html_text, store):
         elif kind == "IMATH":
             value = "$" + html.escape(raw, quote=False) + "$"
         else:
-            value = html.escape(raw, quote=False)
+            value = "<code>%s</code>" % html.escape(raw, quote=False)
         html_text = html_text.replace(key, value)
     return html_text
 
@@ -103,8 +104,11 @@ def restore(html_text, store):
 def render_markdown(body):
     protected, store = protect(body)
     md = markdown.Markdown(
-        extensions=["fenced_code", "codehilite", "tables", "footnotes", "sane_lists", "attr_list"],
-        extension_configs={"codehilite": {"guess_lang": False, "linenums": False}},
+        extensions=["fenced_code", "codehilite", "tables", "footnotes", "sane_lists", "attr_list", "toc"],
+        extension_configs={
+            "codehilite": {"guess_lang": False, "linenums": False},
+            "toc": {"toc_depth": "2-3", "title": "跳转目录"},
+        },
     )
     return restore(md.convert(protected), store)
 

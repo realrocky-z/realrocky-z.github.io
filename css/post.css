@@ -73,6 +73,7 @@
     font-family: var(--font-serif);
     line-height: 1.35;
     margin: 2em 0 0.6em;
+    scroll-margin-top: 76px;
 }
 .post-content h2 { font-size: 1.45rem; border-bottom: 1px solid var(--color-border); padding-bottom: 6px; }
 .post-content h3 { font-size: 1.18rem; }
@@ -134,6 +135,27 @@
 }
 .post-content mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
 .post-content .footnote { font-size: 0.88rem; color: var(--color-text-mid); }
+.post-content .toc {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 16px 22px;
+    margin: 1.4em 0 2em;
+    font-size: 0.92rem;
+}
+.post-content .toc .toctitle {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.post-content .toc ul { margin: 0; padding: 0; list-style: none; }
+.post-content .toc ul ul { margin: 2px 0 6px 1.1em; }
+.post-content .toc li { margin: 0.18em 0; line-height: 1.55; }
+.post-content .toc ul ul li { font-size: 0.88rem; }
+.post-content .toc a { color: var(--color-text-mid); }
+.post-content .toc a:hover { color: var(--color-accent); }
 .post-footer {
     max-width: 780px;
     margin: 0 auto;
