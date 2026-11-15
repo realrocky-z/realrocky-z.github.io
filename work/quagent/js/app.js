@@ -50,6 +50,7 @@
     function init() {
         bindTabs();
         bindActions();
+        bindModal();
         renderExamples();
         renderTools();
 
@@ -261,10 +262,15 @@
             });
         });
         $("#btn-reset-progress").addEventListener("click", function () {
-            if (!window.confirm("要清空本地保存的做题记录吗？")) return;
-            state.progress.clear();
-            saveProgress();
-            updateProgressUI();
+            openModal("清空做题记录", "本地保存的做题进度会被清空，编辑器里的 SQL 不受影响。", [
+                { label: "清空", primary: true, onClick: function () {
+                    closeModal();
+                    state.progress.clear();
+                    saveProgress();
+                    updateProgressUI();
+                } },
+                { label: "取消", onClick: closeModal }
+            ]);
         });
         $("#sql-editor").addEventListener("input", function () {
             if (state.typing) stopTyping(false);
@@ -354,27 +360,79 @@
         if (!state.current) return;
         var id = state.current.id;
 
+        openModal("选择一种写法", "可以看内置的参考示例，也可以填入自己的模型 API KEY。", [
+            { label: "看内置参考示例", primary: true, onClick: function () {
+                closeModal();
+                showUsageNotice(function () { loadReference(id); });
+            } },
+            { label: "填入模型 API KEY", onClick: function () {
+                closeModal();
+                showUsageNotice(null);
+            } }
+        ]);
+    }
+
+    function showUsageNotice(next) {
+        var actions = [];
+        if (next) {
+            actions.push({ label: "继续看示例", primary: true, onClick: function () {
+                closeModal();
+                next();
+            } });
+        }
+        actions.push({ label: "下载完整项目", primary: !next, onClick: function () {
+            closeModal();
+            scrollToDownload();
+        } });
+        if (!next) {
+            actions.push({ label: "知道了", onClick: closeModal });
+        }
+        openModal("建议下载到本地使用",
+            "我们建议您将我的这个项目下载到本地，连接您的Harness Agent进行使用，避免秘钥泄露！",
+            actions);
+    }
+
+    function scrollToDownload() {
+        var block = $(".download-block");
+        if (!block) return;
+        if (window.innerWidth <= 820) switchTab("workbench");
+        block.scrollIntoView({ behavior: "smooth", block: "center" });
+        var btn = $("#btn-download");
+        if (btn && !btn.disabled) btn.click();
+    }
+
+    function loadReference(id) {
         if (state.solutions) {
             beginReference(id);
             return;
         }
         fetchJSON("data/solutions.json").then(function (solutions) {
             state.solutions = solutions;
-            if (state.current && state.current.id === id) beginReference(id);
+            beginReference(id);
         }).catch(function (err) {
             showVerdict("fail", "参考写法没有加载出来", "原因是 " + err.message + "。");
         });
     }
 
     function beginReference(id) {
+        if (!state.current || state.current.id !== id) return;
         var sql = (state.solutions && state.solutions[id]) || "";
         if (!sql) {
             showVerdict("fail", "这道题没有参考写法", "换一道题再试。");
             return;
         }
         var editor = $("#sql-editor");
-        if (editor.value.trim() && !window.confirm(
-            "参考写法是预置的标准答案，不是模型现场生成，会覆盖编辑器内容，继续吗？")) {
+        if (editor.value.trim()) {
+            openModal("编辑器里已经有内容",
+                "参考写法是预置的标准答案，不是模型现场生成，会覆盖编辑器内容。继续吗？",
+                [
+                    { label: "覆盖并填入", primary: true, onClick: function () {
+                        closeModal();
+                        $("#verdict").hidden = true;
+                        typeReference(sql);
+                    } },
+                    { label: "取消", onClick: closeModal }
+                ]);
             return;
         }
         $("#verdict").hidden = true;
@@ -427,6 +485,72 @@
         if (btn) btn.textContent = "参考写法";
         setBusy(false);
         if (save) saveDraft();
+    }
+
+    /* ===== Modal ===== */
+
+    var modalReturnFocus = null;
+    var modalScroll = "";
+
+    function openModal(title, body, actions) {
+        var backdrop = $("#modal");
+        if (!backdrop) return;
+        modalReturnFocus = document.activeElement;
+        modalScroll = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        $("#modal-title").textContent = title;
+        $("#modal-body").textContent = body;
+        var box = $("#modal-actions");
+        box.innerHTML = "";
+        actions.forEach(function (action) {
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "lab-btn" + (action.primary ? " primary" : "");
+            btn.textContent = action.label;
+            btn.addEventListener("click", action.onClick);
+            box.appendChild(btn);
+        });
+        backdrop.hidden = false;
+        var first = box.querySelector("button");
+        if (first) first.focus();
+    }
+
+    function closeModal() {
+        var backdrop = $("#modal");
+        if (!backdrop || backdrop.hidden) return;
+        backdrop.hidden = true;
+        document.body.style.overflow = modalScroll;
+        if (modalReturnFocus && typeof modalReturnFocus.focus === "function") {
+            try { modalReturnFocus.focus(); } catch (err) { /* 元素可能已被移除 */ }
+        }
+        modalReturnFocus = null;
+    }
+
+    function bindModal() {
+        var backdrop = $("#modal");
+        if (!backdrop) return;
+        backdrop.addEventListener("click", function (event) {
+            if (event.target === backdrop) closeModal();
+        });
+        document.addEventListener("keydown", function (event) {
+            if (backdrop.hidden) return;
+            if (event.key === "Escape") {
+                closeModal();
+                return;
+            }
+            if (event.key !== "Tab") return;
+            var items = Array.prototype.slice.call(backdrop.querySelectorAll("button"));
+            if (!items.length) return;
+            var first = items[0];
+            var last = items[items.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
     }
 
     /* ===== Download ===== */
