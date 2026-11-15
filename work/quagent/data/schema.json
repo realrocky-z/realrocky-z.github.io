@@ -1,0 +1,240 @@
+{
+ "scenario": {
+  "title": "海外外卖平台反作弊取数场景",
+  "business": "覆盖新加坡、曼谷、吉隆坡、雅加达、胡志明市、马尼拉六个城市的外卖订单、用户行为、设备、骑手、商家与优惠券数据。用于练习异常交易识别、作弊特征分析、策略前后对比与监控指标取数。",
+  "data_range": [
+   "2026-10-05 00:00:00",
+   "2026-11-01 23:59:59"
+  ],
+  "reference_date": "2026-11-01",
+  "timezone": "UTC",
+  "currency": "美元等值",
+  "disclaimer": "全部为合成数据，不含任何真实公司、用户或交易信息。"
+ },
+ "tables": {
+  "users": {
+   "grain": "一行一个注册账号",
+   "columns": {
+    "user_id": {
+     "type": "TEXT",
+     "desc": "账号 ID，U 开头"
+    },
+    "city": {
+     "type": "TEXT",
+     "desc": "注册城市，也是默认下单城市"
+    },
+    "country": {
+     "type": "TEXT",
+     "desc": "国家代码：SG/TH/MY/ID/VN/PH"
+    },
+    "signup_ts": {
+     "type": "TEXT",
+     "desc": "注册时间，UTC，格式 YYYY-MM-DD HH:MM:SS"
+    },
+    "user_level": {
+     "type": "TEXT",
+     "desc": "账号等级：new/normal/vip"
+    }
+   }
+  },
+  "devices": {
+   "grain": "一行一个“设备-账号”关系；同一设备可对应多个账号",
+   "columns": {
+    "device_id": {
+     "type": "TEXT",
+     "desc": "设备 ID，D 开头"
+    },
+    "user_id": {
+     "type": "TEXT",
+     "desc": "使用该设备的账号"
+    },
+    "os": {
+     "type": "TEXT",
+     "desc": "操作系统：iOS/Android"
+    },
+    "first_seen_ts": {
+     "type": "TEXT",
+     "desc": "该账号首次在此设备出现的时间"
+    },
+    "last_seen_ts": {
+     "type": "TEXT",
+     "desc": "该账号最后一次在此设备活跃的时间"
+    },
+    "ip_city": {
+     "type": "TEXT",
+     "desc": "设备最近 IP 归属城市"
+    }
+   }
+  },
+  "riders": {
+   "grain": "一行一个骑手",
+   "columns": {
+    "rider_id": {
+     "type": "TEXT",
+     "desc": "骑手 ID，R 开头"
+    },
+    "city": {
+     "type": "TEXT",
+     "desc": "骑手所属城市"
+    },
+    "signup_ts": {
+     "type": "TEXT",
+     "desc": "骑手注册时间"
+    },
+    "status": {
+     "type": "TEXT",
+     "desc": "在职状态：active/inactive"
+    },
+    "device_id": {
+     "type": "TEXT",
+     "desc": "骑手本人常用设备 ID，可能为空"
+    }
+   }
+  },
+  "merchants": {
+   "grain": "一行一个商家",
+   "columns": {
+    "merchant_id": {
+     "type": "TEXT",
+     "desc": "商家 ID，M 开头"
+    },
+    "city": {
+     "type": "TEXT",
+     "desc": "商家所在城市"
+    },
+    "category": {
+     "type": "TEXT",
+     "desc": "品类：快餐/饮品/甜品/正餐/超市"
+    },
+    "signup_ts": {
+     "type": "TEXT",
+     "desc": "入驻时间"
+    }
+   }
+  },
+  "orders": {
+   "grain": "一行一个订单",
+   "columns": {
+    "order_id": {
+     "type": "TEXT",
+     "desc": "订单 ID，O 开头"
+    },
+    "user_id": {
+     "type": "TEXT",
+     "desc": "下单账号"
+    },
+    "rider_id": {
+     "type": "TEXT",
+     "desc": "配送骑手；未接单时可为空"
+    },
+    "merchant_id": {
+     "type": "TEXT",
+     "desc": "商家"
+    },
+    "city": {
+     "type": "TEXT",
+     "desc": "下单城市"
+    },
+    "order_ts": {
+     "type": "TEXT",
+     "desc": "下单时间，UTC"
+    },
+    "delivered_ts": {
+     "type": "TEXT",
+     "desc": "送达时间；仅 delivered 状态有值"
+    },
+    "status": {
+     "type": "TEXT",
+     "desc": "订单状态：delivered/cancelled/refunded/undelivered"
+    },
+    "gmv": {
+     "type": "REAL",
+     "desc": "商品原价金额"
+    },
+    "discount_amt": {
+     "type": "REAL",
+     "desc": "优惠金额"
+    },
+    "pay_amt": {
+     "type": "REAL",
+     "desc": "实付金额 = gmv - discount_amt"
+    },
+    "refund_amt": {
+     "type": "REAL",
+     "desc": "退款金额；仅 refunded 状态非零"
+    },
+    "is_new_user": {
+     "type": "INTEGER",
+     "desc": "下单时注册是否未满 7 天：1/0"
+    },
+    "order_ip": {
+     "type": "TEXT",
+     "desc": "下单 IP"
+    }
+   }
+  },
+  "coupons": {
+   "grain": "一行一张发出的优惠券",
+   "columns": {
+    "coupon_id": {
+     "type": "TEXT",
+     "desc": "券 ID，C 开头"
+    },
+    "user_id": {
+     "type": "TEXT",
+     "desc": "领券账号"
+    },
+    "issued_ts": {
+     "type": "TEXT",
+     "desc": "发券时间"
+    },
+    "used_ts": {
+     "type": "TEXT",
+     "desc": "核销时间；未核销为 NULL"
+    },
+    "order_id": {
+     "type": "TEXT",
+     "desc": "核销订单；未核销为 NULL"
+    },
+    "discount_amt": {
+     "type": "REAL",
+     "desc": "券面优惠金额"
+    },
+    "campaign": {
+     "type": "TEXT",
+     "desc": "活动：new_user/festival/retention"
+    }
+   }
+  }
+ },
+ "join_keys": [
+  "orders.user_id = users.user_id",
+  "orders.rider_id = riders.rider_id",
+  "orders.merchant_id = merchants.merchant_id",
+  "devices.user_id = users.user_id",
+  "riders.device_id = devices.device_id",
+  "coupons.order_id = orders.order_id",
+  "coupons.user_id = users.user_id"
+ ],
+ "pitfalls": [
+  "金额统一为美元等值，不要按本币理解或换算。",
+  "时间为 UTC 文本，可直接按字符串比较；跨天判断用 substr(order_ts,1,10)。",
+  "一台设备可对应多个账号；统计账号规模必须按 user_id 去重，不能数设备行。",
+  "净 GMV = SUM(pay_amt - refund_amt)，不是 SUM(gmv)。",
+  "活跃用户按去重 user_id，不是订单数；未送达订单是否计入要看问题口径。",
+  "refunded 订单的 refund_amt 等于 pay_amt；cancelled 订单没有退款金额。",
+  "coupons.used_ts 为 NULL 表示未核销，不能用 used_ts = '' 判断。",
+  "所有数据为合成数据，结论只用于方法演示。"
+ ],
+ "demo": {
+  "note": "演示库裁掉 events 表以控制下载体积；24 道评测题均不依赖该表。其余 6 张表与源库一致。",
+  "row_counts": {
+   "coupons": 20150,
+   "devices": 5781,
+   "merchants": 300,
+   "orders": 60430,
+   "riders": 400,
+   "users": 5000
+  }
+ }
+}

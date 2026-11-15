@@ -68,6 +68,34 @@ var CONFIG = {
         }
     ],
 
+    // ---- Work 页面 ----
+    work: [
+        // 国潮项目已于 2026-11-14 下线，待叙述重写后再上线
+        // {
+        //     title: "Guochao IP Merchandise Segmentation",
+        //     desc:  "National market research competition. Stratified sampling across three Guangzhou districts, four cleaning rules, then K-means segmentation and SEM on six perceived-value dimensions. 451 distributed, 447 returned, 429 valid.",
+        //     tags:  ["Sampling", "K-means", "SEM"],
+        //     image: "assets/work-guochao.png",
+        //     link:  "files/work/guochao-onepager.pdf"
+        // },
+        {
+            title: "Read-only SQL Agent — Online Workbench",
+            desc:  "A browser workbench for 24 SQL exercises on synthetic data. It does not call a model: you write the SQL, the page runs it locally, and the result is graded against reference answers. The agent itself is six read-only MCP tools that let a model inspect the schema and metric definitions, then run one guarded query at a time. The full project is downloadable and runs locally. One exercise is hand-verified, and 10 internal checks pass.",
+            tags:  ["Read-only SQL", "24 SQL exercises", "Answer checking"],
+            image: "assets/work-quagent.png",
+            lab:   "work/quagent/index.html",
+            link:  "files/work/quagent-workbench.pdf"
+        },
+        {
+            title: "Subsidy Abuse Analysis — Method Demo",
+            desc:  "End-to-end method demo on synthetic data: metric definitions, reconciliation, rule thresholds, and a one-page dashboard. Synthetic data, not a real business case.",
+            status: "Method demo · synthetic data",
+            tags:  ["Synthetic", "Cohort", "Precision-Recall"],
+            image: "assets/work-anticheat.png",
+            link:  "files/work/anticheat-method-demo.pdf"
+        }
+    ],
+
     // ---- Blog 页面 ----
     // 文章放在 blog/*.md（YAML 头部），构建时自动生成文章页和列表。
 

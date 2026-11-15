@@ -1,0 +1,29 @@
+{
+ "db_gz_sha256": "ce2c6ea4697193839d0c8f383508a001847e38883e130a7908e7b1b4600bbadf",
+ "db_gz_bytes": 3688273,
+ "db_raw_bytes": 11890688,
+ "questions_sha256": "a6db75adba0a3534462cd65a91890fb4c653ace662cb77dda65b8d55456baabe",
+ "question_count": 24,
+ "tables": {
+  "coupons": 20150,
+  "devices": 5781,
+  "merchants": 300,
+  "orders": 60430,
+  "riders": 400,
+  "users": 5000
+ },
+ "dropped_indexes": [
+  "idx_orders_user_ts",
+  "idx_orders_ts",
+  "idx_orders_merchant",
+  "idx_orders_rider",
+  "idx_devices_device",
+  "idx_coupons_user"
+ ],
+ "baseline": {
+  "agent_verified": 1,
+  "agent_total": 24,
+  "workbench_golden": 10
+ },
+ "seed": 20261105
+}

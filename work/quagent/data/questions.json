@@ -1,0 +1,909 @@
+[
+ {
+  "id": "Q01",
+  "question": "上周（2026-10-26 至 2026-11-01）各城市已送达订单的净 GMV 与订单数，按净 GMV 降序。",
+  "category": "规模",
+  "difficulty": "easy",
+  "skill": "多表联结+聚合",
+  "expect_columns": [
+   "city",
+   "orders",
+   "net_gmv"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "city",
+   "orders",
+   "net_gmv"
+  ],
+  "golden_rows": [
+   [
+    "Singapore",
+    3355,
+    81707.41
+   ],
+   [
+    "Bangkok",
+    2867,
+    69523.6
+   ],
+   [
+    "Jakarta",
+    2337,
+    58227.6
+   ],
+   [
+    "Kuala Lumpur",
+    2227,
+    54009.21
+   ],
+   [
+    "Ho Chi Minh City",
+    1457,
+    35859.14
+   ],
+   [
+    "Manila",
+    1044,
+    25555.26
+   ]
+  ]
+ },
+ {
+  "id": "Q02",
+  "question": "上周（2026-10-26 至 2026-11-01）整体客单价（净 GMV ÷ 已送达订单数），保留两位小数。",
+  "category": "规模",
+  "difficulty": "easy",
+  "skill": "聚合",
+  "expect_columns": [
+   "aov"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "aov"
+  ],
+  "golden_rows": [
+   [
+    24.45
+   ]
+  ]
+ },
+ {
+  "id": "Q03",
+  "question": "2026 年 10 月每天的订单量，按日期升序。",
+  "category": "规模",
+  "difficulty": "easy",
+  "skill": "日期分组",
+  "expect_columns": [
+   "d",
+   "orders"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "d",
+   "orders"
+  ],
+  "golden_rows": [
+   [
+    "2026-10-05",
+    1810
+   ],
+   [
+    "2026-10-06",
+    1886
+   ],
+   [
+    "2026-10-07",
+    1857
+   ],
+   [
+    "2026-10-08",
+    1958
+   ],
+   [
+    "2026-10-09",
+    1953
+   ],
+   [
+    "2026-10-10",
+    2009
+   ],
+   [
+    "2026-10-11",
+    1876
+   ],
+   [
+    "2026-10-12",
+    2194
+   ],
+   [
+    "2026-10-13",
+    2042
+   ],
+   [
+    "2026-10-14",
+    2101
+   ],
+   [
+    "2026-10-15",
+    2169
+   ],
+   [
+    "2026-10-16",
+    2151
+   ],
+   [
+    "2026-10-17",
+    2179
+   ],
+   [
+    "2026-10-18",
+    2273
+   ],
+   [
+    "2026-10-19",
+    2443
+   ],
+   [
+    "2026-10-20",
+    2357
+   ],
+   [
+    "2026-10-21",
+    2357
+   ],
+   [
+    "2026-10-22",
+    2487
+   ],
+   [
+    "2026-10-23",
+    2519
+   ],
+   [
+    "2026-10-24",
+    2524
+   ],
+   [
+    "2026-10-25",
+    2199
+   ],
+   [
+    "2026-10-26",
+    2154
+   ],
+   [
+    "2026-10-27",
+    2169
+   ],
+   [
+    "2026-10-28",
+    2138
+   ],
+   [
+    "2026-10-29",
+    2244
+   ],
+   [
+    "2026-10-30",
+    2153
+   ],
+   [
+    "2026-10-31",
+    2098
+   ]
+  ]
+ },
+ {
+  "id": "Q04",
+  "question": "上周各城市新客订单占比（new_user=1 的订单数 ÷ 已送达订单数），保留四位小数，按占比降序。",
+  "category": "新客",
+  "difficulty": "medium",
+  "skill": "条件聚合",
+  "expect_columns": [
+   "city",
+   "new_user_orders",
+   "new_ratio"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "city",
+   "new_user_orders",
+   "new_ratio"
+  ],
+  "golden_rows": [
+   [
+    "Bangkok",
+    73,
+    0.0255
+   ],
+   [
+    "Singapore",
+    82,
+    0.0244
+   ],
+   [
+    "Manila",
+    23,
+    0.022
+   ],
+   [
+    "Kuala Lumpur",
+    48,
+    0.0216
+   ],
+   [
+    "Ho Chi Minh City",
+    24,
+    0.0165
+   ],
+   [
+    "Jakarta",
+    26,
+    0.0111
+   ]
+  ]
+ },
+ {
+  "id": "Q05",
+  "question": "2026-10-01 至 2026-10-25 注册的用户中，注册后 7 天内下过单的人数与比例（比例保留四位小数）。",
+  "category": "新客",
+  "difficulty": "hard",
+  "skill": "子查询+时间窗",
+  "expect_columns": [
+   "new_users",
+   "ordered_7d",
+   "rate"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "new_users",
+   "ordered_7d",
+   "rate"
+  ],
+  "golden_rows": [
+   [
+    994,
+    654,
+    0.6579
+   ]
+  ]
+ },
+ {
+  "id": "Q06",
+  "question": "上周下过已送达订单的用户中，复购（≥2 单）人数与复购率（保留四位小数）。",
+  "category": "新客",
+  "difficulty": "medium",
+  "skill": "分组后二次聚合",
+  "expect_columns": [
+   "buyers",
+   "repeat_buyers",
+   "repeat_rate"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "buyers",
+   "repeat_buyers",
+   "repeat_rate"
+  ],
+  "golden_rows": [
+   [
+    2851,
+    2480,
+    0.8699
+   ]
+  ]
+ },
+ {
+  "id": "Q07",
+  "question": "各优惠券活动的领券数、核销数、核销率（保留四位小数），按核销率降序。",
+  "category": "优惠券",
+  "difficulty": "medium",
+  "skill": "条件聚合",
+  "expect_columns": [
+   "campaign",
+   "issued",
+   "used",
+   "use_rate"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "campaign",
+   "issued",
+   "used",
+   "use_rate"
+  ],
+  "golden_rows": [
+   [
+    "festival",
+    7090,
+    5671,
+    0.7999
+   ],
+   [
+    "new_user",
+    7974,
+    6360,
+    0.7976
+   ],
+   [
+    "retention",
+    5086,
+    4035,
+    0.7934
+   ]
+  ]
+ },
+ {
+  "id": "Q08",
+  "question": "领券后 60 秒内核销、且该订单已退款的用户数（券滥用嫌疑规模）。",
+  "category": "优惠券",
+  "difficulty": "hard",
+  "skill": "时间差+联结",
+  "expect_columns": [
+   "users"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "users"
+  ],
+  "golden_rows": [
+   [
+    150
+   ]
+  ]
+ },
+ {
+  "id": "Q09",
+  "question": "各活动已核销订单的优惠金额占 GMV 比例（保留四位小数），按比例降序。",
+  "category": "优惠券",
+  "difficulty": "medium",
+  "skill": "联结+聚合",
+  "expect_columns": [
+   "campaign",
+   "orders",
+   "discount_share"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "campaign",
+   "orders",
+   "discount_share"
+  ],
+  "golden_rows": [
+   [
+    "festival",
+    5671,
+    0.0985
+   ],
+   [
+    "retention",
+    4035,
+    0.0937
+   ],
+   [
+    "new_user",
+    6360,
+    0.093
+   ]
+  ]
+ },
+ {
+  "id": "Q10",
+  "question": "关联账号数 ≥3 的设备及其账号数，按账号数降序、设备 ID 升序。",
+  "category": "设备",
+  "difficulty": "easy",
+  "skill": "分组+HAVING",
+  "expect_columns": [
+   "device_id",
+   "users"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "device_id",
+   "users"
+  ],
+  "golden_rows": [
+   [
+    "D900001",
+    15
+   ],
+   [
+    "D900002",
+    15
+   ]
+  ]
+ },
+ {
+  "id": "Q11",
+  "question": "设备 D900001 与 D900002 一共关联多少账号，其中 2026-10-01 及以后注册的新账号多少。",
+  "category": "设备",
+  "difficulty": "medium",
+  "skill": "条件去重",
+  "expect_columns": [
+   "users",
+   "new_users"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "users",
+   "new_users"
+  ],
+  "golden_rows": [
+   [
+    30,
+    30
+   ]
+  ]
+ },
+ {
+  "id": "Q12",
+  "question": "同一下单 IP、同一天出现 ≥5 个不同账号的“IP-日”组合数。",
+  "category": "设备",
+  "difficulty": "medium",
+  "skill": "分组+HAVING",
+  "expect_columns": [
+   "ip_days"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "ip_days"
+  ],
+  "golden_rows": [
+   [
+    14
+   ]
+  ]
+ },
+ {
+  "id": "Q13",
+  "question": "各城市用户的平均关联设备数（保留两位小数），按均值降序。",
+  "category": "设备",
+  "difficulty": "medium",
+  "skill": "子查询+平均",
+  "expect_columns": [
+   "city",
+   "avg_devices"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "city",
+   "avg_devices"
+  ],
+  "golden_rows": [
+   [
+    "Bangkok",
+    1.17
+   ],
+   [
+    "Singapore",
+    1.16
+   ],
+   [
+    "Manila",
+    1.16
+   ],
+   [
+    "Ho Chi Minh City",
+    1.16
+   ],
+   [
+    "Kuala Lumpur",
+    1.14
+   ],
+   [
+    "Jakarta",
+    1.14
+   ]
+  ]
+ },
+ {
+  "id": "Q14",
+  "question": "上周各城市骑手人均完成单量（已送达订单数 ÷ 有记录的骑手数，保留两位小数），按人均降序。",
+  "category": "骑手",
+  "difficulty": "medium",
+  "skill": "LEFT JOIN+聚合",
+  "expect_columns": [
+   "city",
+   "riders",
+   "orders",
+   "avg_orders"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "city",
+   "riders",
+   "orders",
+   "avg_orders"
+  ],
+  "golden_rows": [
+   [
+    "Bangkok",
+    72,
+    2862,
+    39.75
+   ],
+   [
+    "Singapore",
+    91,
+    3355,
+    36.87
+   ],
+   [
+    "Manila",
+    31,
+    1044,
+    33.68
+   ],
+   [
+    "Ho Chi Minh City",
+    46,
+    1457,
+    31.67
+   ],
+   [
+    "Jakarta",
+    75,
+    2337,
+    31.16
+   ],
+   [
+    "Kuala Lumpur",
+    85,
+    2232,
+    26.26
+   ]
+  ]
+ },
+ {
+  "id": "Q15",
+  "question": "订单量 ≥20 的骑手中，取消率最高的 10 位（取消率保留四位小数，按取消率降序、订单数降序）。",
+  "category": "骑手",
+  "difficulty": "medium",
+  "skill": "HAVING+排序",
+  "expect_columns": [
+   "rider_id",
+   "orders",
+   "cancel_rate"
+  ],
+  "ordered": true,
+  "golden_columns": [
+   "rider_id",
+   "orders",
+   "cancel_rate"
+  ],
+  "golden_rows": [
+   [
+    "R098",
+    164,
+    0.1463
+   ],
+   [
+    "R225",
+    124,
+    0.1452
+   ],
+   [
+    "R286",
+    180,
+    0.1333
+   ],
+   [
+    "R111",
+    176,
+    0.1307
+   ],
+   [
+    "R125",
+    152,
+    0.1184
+   ],
+   [
+    "R184",
+    149,
+    0.1141
+   ],
+   [
+    "R135",
+    132,
+    0.1136
+   ],
+   [
+    "R185",
+    134,
+    0.1119
+   ],
+   [
+    "R137",
+    190,
+    0.1105
+   ],
+   [
+    "R050",
+    109,
+    0.1101
+   ]
+  ]
+ },
+ {
+  "id": "Q16",
+  "question": "骑手常用设备同时被某个用户账号使用的“骑手-账号”对数。",
+  "category": "骑手",
+  "difficulty": "medium",
+  "skill": "多表联结",
+  "expect_columns": [
+   "pairs"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "pairs"
+  ],
+  "golden_rows": [
+   [
+    20
+   ]
+  ]
+ },
+ {
+  "id": "Q17",
+  "question": "由“与该用户共用设备”的骑手配送的订单数（自交易嫌疑订单）。",
+  "category": "骑手",
+  "difficulty": "hard",
+  "skill": "三表联结",
+  "expect_columns": [
+   "orders"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "orders"
+  ],
+  "golden_rows": [
+   [
+    100
+   ]
+  ]
+ },
+ {
+  "id": "Q18",
+  "question": "订单量 ≥50 的商家中，退款率最高的 10 家（退款率保留四位小数，按退款率降序、订单数降序）。",
+  "category": "商家",
+  "difficulty": "medium",
+  "skill": "条件聚合",
+  "expect_columns": [
+   "merchant_id",
+   "orders",
+   "refund_rate"
+  ],
+  "ordered": true,
+  "golden_columns": [
+   "merchant_id",
+   "orders",
+   "refund_rate"
+  ],
+  "golden_rows": [
+   [
+    "M299",
+    62,
+    0.3871
+   ],
+   [
+    "M297",
+    65,
+    0.3846
+   ],
+   [
+    "M298",
+    65,
+    0.3846
+   ],
+   [
+    "M300",
+    66,
+    0.3636
+   ],
+   [
+    "M125",
+    225,
+    0.0844
+   ],
+   [
+    "M294",
+    246,
+    0.0813
+   ],
+   [
+    "M068",
+    194,
+    0.0773
+   ],
+   [
+    "M237",
+    183,
+    0.0765
+   ],
+   [
+    "M095",
+    158,
+    0.0759
+   ],
+   [
+    "M142",
+    228,
+    0.0746
+   ]
+  ]
+ },
+ {
+  "id": "Q19",
+  "question": "退款金额最高的 5 家商家及其退款金额（保留两位小数）。",
+  "category": "商家",
+  "difficulty": "easy",
+  "skill": "聚合+排序",
+  "expect_columns": [
+   "merchant_id",
+   "refund_amt"
+  ],
+  "ordered": true,
+  "golden_columns": [
+   "merchant_id",
+   "refund_amt"
+  ],
+  "golden_rows": [
+   [
+    "M298",
+    605.46
+   ],
+   [
+    "M300",
+    573.05
+   ],
+   [
+    "M299",
+    550.57
+   ],
+   [
+    "M297",
+    518.43
+   ],
+   [
+    "M125",
+    457.4
+   ]
+  ]
+ },
+ {
+  "id": "Q20",
+  "question": "各商家品类的 GMV 与占全部订单 GMV 的比例（比例保留四位小数），按 GMV 降序。",
+  "category": "商家",
+  "difficulty": "medium",
+  "skill": "联结+占比",
+  "expect_columns": [
+   "category",
+   "gmv",
+   "share"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "category",
+   "gmv",
+   "share"
+  ],
+  "golden_rows": [
+   [
+    "正餐",
+    375395.54,
+    0.2557
+   ],
+   [
+    "甜品",
+    299180.3,
+    0.2038
+   ],
+   [
+    "超市",
+    293306.09,
+    0.1998
+   ],
+   [
+    "饮品",
+    262130.46,
+    0.1785
+   ],
+   [
+    "快餐",
+    238348.76,
+    0.1623
+   ]
+  ]
+ },
+ {
+  "id": "Q21",
+  "question": "存在“同一用户、同一小时 ≥8 单”的用户数与涉及订单数。",
+  "category": "作弊特征",
+  "difficulty": "hard",
+  "skill": "分组+HAVING+子查询",
+  "expect_columns": [
+   "users",
+   "orders"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "users",
+   "orders"
+  ],
+  "golden_rows": [
+   [
+    177,
+    1643
+   ]
+  ]
+ },
+ {
+  "id": "Q22",
+  "question": "退款订单数 ≥3 的用户数。",
+  "category": "作弊特征",
+  "difficulty": "easy",
+  "skill": "分组+HAVING",
+  "expect_columns": [
+   "users"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "users"
+  ],
+  "golden_rows": [
+   [
+    182
+   ]
+  ]
+ },
+ {
+  "id": "Q23",
+  "question": "三类作弊嫌疑（多账号设备、60 秒券滥用、小时频次 ≥8）合并去重后的用户数。",
+  "category": "作弊特征",
+  "difficulty": "hard",
+  "skill": "CTE+UNION",
+  "expect_columns": [
+   "users"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "users"
+  ],
+  "golden_rows": [
+   [
+    339
+   ]
+  ]
+ },
+ {
+  "id": "Q24",
+  "question": "设备 D900001/D900002 关联账号在 2026-10-18 至 10-24（处置前）与 10-25 至 10-31（处置后）的订单数与下单用户数对比，按时间顺序输出。",
+  "category": "策略评估",
+  "difficulty": "hard",
+  "skill": "CTE+LEFT JOIN+CASE",
+  "expect_columns": [
+   "period",
+   "orders",
+   "users"
+  ],
+  "ordered": false,
+  "golden_columns": [
+   "period",
+   "orders",
+   "users"
+  ],
+  "golden_rows": [
+   [
+    "处置前",
+    300,
+    30
+   ],
+   [
+    "处置后",
+    0,
+    0
+   ]
+  ]
+ }
+]

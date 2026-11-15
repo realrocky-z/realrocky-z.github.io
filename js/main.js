@@ -118,6 +118,14 @@
     }
 })();
 
+// ===== Render Work page from CONFIG =====
+(function () {
+    var workGrid = document.getElementById('work-grid');
+    if (workGrid && CONFIG.work) {
+        workGrid.innerHTML = renderCards(CONFIG.work);
+    }
+})();
+
 // ===== Render Blog page from blog/posts.js =====
 (function () {
     var list = document.getElementById('blog-list');
@@ -184,13 +192,30 @@ function renderCards(items) {
     items.forEach(function (item) {
         var tags = '';
         item.tags.forEach(function (t) { tags += '<span>' + escapeHTML(t) + '</span>'; });
+        var status = item.status
+            ? '<div class="card-status">' + escapeHTML(item.status) + '</div>'
+            : '';
+        var action;
+        if (item.lab) {
+            action = '<div class="card-actions">'
+                   + '<a class="btn-download btn-view" href="' + escapeAttr(item.lab) + '">Try the demo</a>'
+                   + (item.link
+                        ? '<a class="card-secondary" href="' + escapeAttr(item.link) + '" target="_blank" rel="noopener">One-page PDF</a>'
+                        : '')
+                   + '</div>';
+        } else if (item.link) {
+            action = '<a class="btn-download btn-view" href="' + escapeAttr(item.link) + '" target="_blank" rel="noopener">Open PDF</a>';
+        } else {
+            action = '<button class="btn-download" data-file="' + escapeAttr(item.file) + '" data-label="' + escapeAttr(item.title) + '">Download file</button>';
+        }
         html += '<article class="card">'
               + '<div class="card-preview"><img src="' + escapeAttr(item.image) + '" alt="' + escapeAttr(item.title) + '" onerror="this.style.display=\'none\'"></div>'
               + '<div class="card-body">'
               + '<h3>' + escapeHTML(item.title) + '</h3>'
+              + status
               + '<p>' + escapeHTML(item.desc) + '</p>'
               + '<div class="card-tags">' + tags + '</div>'
-              + '<button class="btn-download" data-file="' + escapeAttr(item.file) + '" data-label="' + escapeAttr(item.title) + '">Download file</button>'
+              + action
               + '</div></article>';
     });
     return html;
