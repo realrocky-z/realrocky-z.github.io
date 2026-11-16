@@ -1,3 +1,22 @@
+// ===== Welcome screen (home only) =====
+(function () {
+    var welcome = document.getElementById('welcome');
+    var button = document.getElementById('enter-home');
+    if (!welcome || !button || (location.hash && location.hash !== '#home')) return;
+    var name = welcome.querySelector('.welcome-name');
+    if (name) name.textContent = CONFIG.name;
+    welcome.hidden = false;
+    button.focus();
+    button.addEventListener('click', function () {
+        welcome.classList.add('is-leaving');
+        window.setTimeout(function () {
+            welcome.hidden = true;
+            var homeName = document.getElementById('home-name');
+            if (homeName) { homeName.setAttribute('tabindex', '-1'); homeName.focus(); }
+        }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 750);
+    });
+})();
+
 // ===== Page switching =====
 (function () {
     var tabs = document.querySelectorAll('.nav-tab');
@@ -70,16 +89,36 @@
     var nameEl = document.getElementById('home-name');
     if (nameEl) nameEl.textContent = C.name;
     var bioEl = document.getElementById('home-bio');
-    if (bioEl) bioEl.textContent = C.bio;
+    var researchEl = document.getElementById('home-research');
+    var bioParts = String(C.bio || '').split(/\s*Research Fields:\s*/i);
+    if (bioEl) bioEl.textContent = bioParts[0];
+    if (researchEl && bioParts.length > 1) {
+        var fields = bioParts.slice(1).join('Research Fields: ').split(',').map(function (field) { return field.trim(); }).filter(Boolean);
+        if (fields.length) {
+            researchEl.innerHTML = '<span class="research-label">Research Fields:</span>' + fields.map(function (field) {
+                return '<span class="research-tag">' + escapeHTML(field) + '</span>';
+            }).join('');
+        }
+    }
 
     // Experience
     var expList = document.getElementById('home-experience');
     if (expList && C.experience) {
         var html = '';
         C.experience.forEach(function (item) {
+            if (item.year === 'Prospective') {
+                html += '<details class="prospective"><summary><span class="prospective-title">Click to view my prospective study</span>'
+                      + '<span class="prospective-icon" aria-hidden="true"></span></summary>'
+                      + '<div class="prospective-detail"><p>' + escapeHTML(item.desc) + '</p></div></details>';
+                return;
+            }
+            var desc = escapeHTML(item.desc);
+            if (item.year === '2023 — Now') {
+                desc = desc.replace('Beijing Normal University', '<a class="school-link" href="https://en.wikipedia.org/wiki/Beijing_Normal_University" target="_blank" rel="noopener noreferrer">Beijing Normal University</a>');
+            }
             html += '<div class="exp-item">'
                   + '<span class="exp-year">' + escapeHTML(item.year) + '</span>'
-                  + '<span class="exp-desc">' + escapeHTML(item.desc) + '</span>'
+                  + '<span class="exp-desc">' + desc + '</span>'
                   + '</div>';
         });
         expList.innerHTML = html;

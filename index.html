@@ -11,6 +11,17 @@
     <link rel="stylesheet" href="css/easter-egg.css">
 </head>
 <body>
+    <div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title" hidden>
+        <div class="welcome-card">
+            <div class="welcome-mark" aria-hidden="true"></div>
+            <h2 id="welcome-title">Welcome to<br>my homepage</h2>
+            <p class="welcome-name">Ruihong Zhong</p>
+            <button class="enter-button" id="enter-home" type="button" aria-label="Enter homepage" title="Enter homepage">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg>
+            </button>
+            <p class="welcome-hint">Enter</p>
+        </div>
+    </div>
 
     <nav class="navbar">
         <span class="nav-brand"></span>
@@ -33,6 +44,7 @@
                 </div>
                 <h1 class="home-name" id="home-name"></h1>
                 <p class="home-bio" id="home-bio"></p>
+                <div class="research-line" id="home-research" aria-label="Research fields"></div>
                 <div class="home-experience" id="home-experience"></div>
                 <div class="home-links" id="home-links"></div>
             </div>

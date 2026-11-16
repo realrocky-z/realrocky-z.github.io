@@ -109,7 +109,10 @@
 .post-content pre code { background: none; padding: 0; font-size: 0.86rem; }
 .post-content table {
     border-collapse: collapse;
+    display: block;
     width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     margin: 1.3em 0;
     font-size: 0.93rem;
 }
@@ -122,6 +125,20 @@
 }
 .post-content th { background: var(--color-tag-bg); font-weight: 600; }
 .post-content img { display: block; max-width: 100%; height: auto; margin: 1.3em auto; border-radius: var(--radius); }
+.post-content figure { margin: 1.9em 0; }
+.post-content figure img { margin: 0 auto; border: 1px solid var(--color-border); }
+.post-content figcaption {
+    margin-top: 0.55em;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+.post-content figcaption .fno {
+    margin-right: 0.45em;
+    font-weight: 600;
+    color: var(--color-text-mid);
+}
 .post-content .table-wrap { overflow-x: auto; margin: 1.2em 0; }
 .post-content .table-wrap table { margin: 0; }
 .post-content .dataframe { font-size: 0.82rem; }
