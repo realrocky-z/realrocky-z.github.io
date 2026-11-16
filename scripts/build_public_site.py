@@ -26,4 +26,22 @@ for p in OUT.rglob('*'):
     text=p.read_text(encoding='utf-8')
     text,n=pattern.subn('[local-path-removed]',text)
     if n:p.write_text(text,encoding='utf-8');count+=n
+# Content-version local JS/CSS references so a new HTML cannot reuse stale assets.
+import hashlib
+from urllib.parse import urlsplit
+for page in OUT.rglob('*.html'):
+    text=page.read_text(encoding='utf-8')
+    def version_asset(match):
+        prefix,url,suffix=match.groups()
+        parsed=urlsplit(url)
+        if parsed.scheme or parsed.netloc or not parsed.path.endswith(('.js','.css')):
+            return match.group(0)
+        target=(OUT/parsed.path.lstrip('/')) if parsed.path.startswith('/') else (page.parent/parsed.path)
+        target=target.resolve()
+        if not target.is_relative_to(OUT.resolve()) or not target.is_file():
+            return match.group(0)
+        digest=hashlib.sha256(target.read_bytes()).hexdigest()[:12]
+        return prefix+parsed.path+'?v='+digest+suffix
+    text=re.sub(r'((?:src|href)=\")([^\"]+)(\")',version_asset,text)
+    page.write_text(text,encoding='utf-8')
 print('Public-only artifact created; local path occurrences redacted:',count)
