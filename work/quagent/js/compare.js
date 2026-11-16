@@ -10,6 +10,19 @@
 
     var TOL = 0.01;
 
+    function copyGroup() {
+        var host = typeof self !== "undefined" ? self : (typeof globalThis !== "undefined" ? globalThis : null);
+        return host && host.QUAGENT_COPY ? host.QUAGENT_COPY.compare || null : null;
+    }
+
+    function text(key, fallback, values) {
+        var group = copyGroup();
+        var template = group && typeof group[key] === "string" ? group[key] : fallback;
+        return template.replace(/\{(\w+)\}/g, function (_, name) {
+            return values && values[name] != null ? values[name] : "";
+        });
+    }
+
     function normalize(value) {
         if (value === null || value === undefined) {
             return { type: "null", value: "" };
@@ -85,40 +98,55 @@
         if (columns.length !== expect.length) {
             return {
                 pass: false,
-                reason: "列数对不上",
-                detail: "你返回了 " + columns.length + " 列，这道题需要 " + expect.length + " 列。"
+                reason: text("columnMismatch", "列数对不上"),
+                detail: text(
+                    "columnDetail",
+                    "你返回了 {got} 列，这道题需要 {want} 列。",
+                    { got: columns.length, want: expect.length }
+                )
             };
         }
-        if (result.truncated && rows.length !== goldRows.length) {
+        if (result.truncated) {
             return {
                 pass: false,
-                reason: "结果太多了",
-                detail: "查询返回的行数超过页面能比较的数量，没法完整比对。"
+                reason: text("tooManyReason", "结果太多了"),
+                detail: text("tooManyDetail", "查询返回的行数超过页面能比较的数量，没法完整比对。")
             };
         }
         if (rows.length !== goldRows.length) {
             return {
                 pass: false,
-                reason: "行数对不上",
-                detail: "你返回了 " + rows.length + " 行，这道题需要 " + goldRows.length + " 行。"
+                reason: text("rowMismatch", "行数对不上"),
+                detail: text(
+                    "rowDetail",
+                    "你返回了 {got} 行，这道题需要 {want} 行。",
+                    { got: rows.length, want: goldRows.length }
+                )
             };
         }
         if (!sameRows(rows, goldRows, Boolean(golden.ordered))) {
             return {
                 pass: false,
-                reason: "结果对不上",
+                reason: text("resultMismatch", "结果对不上"),
                 detail: firstDiff(rows, goldRows, Boolean(golden.ordered))
             };
         }
-        return { pass: true, reason: "通过", detail: "列数和每一行的结果都对上了。" };
+        return {
+            pass: true,
+            reason: text("passReason", "通过"),
+            detail: text("passDetail", "列数和每一行的结果都对上了。")
+        };
     }
 
     function firstDiff(rows, goldRows, ordered) {
         if (ordered) {
             for (var i = 0; i < rows.length; i += 1) {
                 if (!sameRow(rows[i], goldRows[i])) {
-                    return "第 " + (i + 1) + " 行不一样。你的是 " + show(rows[i]) +
-                        "，标准答案是 " + show(goldRows[i]) + "。";
+                    return text(
+                        "rowDiff",
+                        "第 {n} 行不一样。你的是 {got}，标准答案是 {want}。",
+                        { n: i + 1, got: show(rows[i]), want: show(goldRows[i]) }
+                    );
                 }
             }
         }
@@ -132,11 +160,15 @@
                 }
             }
             if (found === -1) {
-                return "你返回的 " + show(rows[r]) + " 这一行不在标准答案里。";
+                return text(
+                    "rowMissing",
+                    "你返回的 {row} 这一行不在标准答案里。",
+                    { row: show(rows[r]) }
+                );
             }
             remaining.splice(found, 1);
         }
-        return "结果和标准答案对不上。";
+        return text("resultDetail", "结果和标准答案对不上。");
     }
 
     function show(row) {

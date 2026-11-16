@@ -69,6 +69,11 @@ test("多重集合按重复次数匹配", () => {
     assert.equal(sameRows([[1], [1]], [[1], [1]], false), true);
 });
 
+test("截断结果即使与参考前缀一致也不能通过", () => {
+    const out = grade({ columns: ["a", "b", "c"], rows: golden.golden_rows, truncated: true }, golden);
+    assert.equal(out.pass, false);
+});
+
 test("行内值逐个比较", () => {
     assert.equal(sameRow([1, "a", null], [1.0, " a ", null]), true);
     assert.equal(sameRow([1, "a"], [1, "b"]), false);

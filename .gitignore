@@ -5,3 +5,9 @@ blog/posts.js
 # Python cache
 __pycache__/
 *.pyc
+
+# Local configuration, browser profiles, backups and build artifacts
+.claude/
+.qa-*/
+_backup_*/
+_site_public/

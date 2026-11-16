@@ -11,6 +11,19 @@
     var FORBIDDEN = /\b(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|ATTACH|DETACH|PRAGMA|VACUUM|REINDEX|REPLACE|TRUNCATE|GRANT|REVOKE)\b/i;
     var ALLOWED_FIRST = /^(SELECT|WITH|EXPLAIN)$/i;
 
+    function copyGroup() {
+        var host = typeof self !== "undefined" ? self : (typeof globalThis !== "undefined" ? globalThis : null);
+        return host && host.QUAGENT_COPY ? host.QUAGENT_COPY.guard || null : null;
+    }
+
+    function text(key, fallback, values) {
+        var group = copyGroup();
+        var template = group && typeof group[key] === "string" ? group[key] : fallback;
+        return template.replace(/\{(\w+)\}/g, function (_, name) {
+            return values && values[name] != null ? values[name] : "";
+        });
+    }
+
     function scan(sql) {
         var clean = [];
         var masked = [];
@@ -64,7 +77,7 @@
             if (ch === "/" && next === "*") {
                 var end = sql.indexOf("*/", i + 2);
                 if (end === -1) {
-                    return { error: "注释没有写完。" };
+                    return { error: text("unclosedComment", "注释没有写完。") };
                 }
                 clean.push(" ");
                 masked.push(" ");
@@ -86,7 +99,11 @@
         }
 
         if (quote) {
-            return { error: quote === "[" ? "方括号没有配对。" : "引号没有配对。" };
+            return {
+                error: quote === "["
+                    ? text("unclosedBracket", "方括号没有配对。")
+                    : text("unclosedQuote", "引号没有配对。")
+            };
         }
 
         return {
@@ -111,7 +128,7 @@
     function guard(sql) {
         var raw = String(sql == null ? "" : sql);
         if (raw.indexOf("\u0000") !== -1) {
-            return { ok: false, sql: "", error: "语句里含有无法识别的空字符。" };
+            return { ok: false, sql: "", error: text("nullChar", "语句里含有无法识别的空字符。") };
         }
 
         var scanned = scan(raw);
@@ -124,7 +141,7 @@
             return {
                 ok: false,
                 sql: "",
-                error: "一次只能提交一条语句，这里实际有 " + parts.length + " 条。"
+                error: text("multiStatement", "一次只能提交一条语句，这里实际有 {n} 条。", { n: parts.length })
             };
         }
 
@@ -132,7 +149,11 @@
         var maskedOne = scanned.masked;
         var first = maskedOne.match(/^\s*([A-Za-z]+)/);
         if (!first || !ALLOWED_FIRST.test(first[1])) {
-            return { ok: false, sql: one, error: "只能执行查询语句，查询要以 SELECT、WITH 或 EXPLAIN 开头。" };
+            return {
+                ok: false,
+                sql: one,
+                error: text("notQuery", "只能执行查询语句，查询要以 SELECT、WITH 或 EXPLAIN 开头。")
+            };
         }
 
         var bad = maskedOne.match(FORBIDDEN);
@@ -140,7 +161,11 @@
             return {
                 ok: false,
                 sql: one,
-                error: "这条语句会修改或删除数据（" + bad[1].toUpperCase() + "），已经拒绝。"
+                error: text(
+                    "writeKeyword",
+                    "这条语句会修改或删除数据（{op}），已经拒绝。",
+                    { op: bad[1].toUpperCase() }
+                )
             };
         }
 

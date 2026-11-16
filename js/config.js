@@ -79,21 +79,14 @@ var CONFIG = {
         //     link:  "files/work/guochao-onepager.pdf"
         // },
         {
-            title: "Read-only SQL Agent — Online Workbench",
-            desc:  "A browser workbench for 24 SQL exercises on synthetic data. It does not call a model: you write the SQL, the page runs it locally, and the result is graded against reference answers. The agent itself is six read-only MCP tools that let a model inspect the schema and metric definitions, then run one guarded query at a time. The full project is downloadable and runs locally. One exercise is hand-verified, and 10 internal checks pass.",
-            tags:  ["Read-only SQL", "24 SQL exercises", "Answer checking"],
+            title: "智能取数助手（SQL）",
+            desc:  "Practice SQL on a synthetic dataset in the browser, with 24 exercises and result checks against reference queries. The page runs your SQL locally and does not call a model. A separate downloadable project provides six read-only MCP tools for inspecting the scenario, schema and metrics, and for checking or running queries.",
+            tags:  ["SQL", "SQLite", "MCP"],
             image: "assets/work-quagent.png",
             lab:   "work/quagent/index.html",
-            link:  "files/work/quagent-workbench.pdf"
-        },
-        {
-            title: "Subsidy Abuse Analysis — Method Demo",
-            desc:  "End-to-end method demo on synthetic data: metric definitions, reconciliation, rule thresholds, and a one-page dashboard. Synthetic data, not a real business case.",
-            status: "Method demo · synthetic data",
-            tags:  ["Synthetic", "Cohort", "Precision-Recall"],
-            image: "assets/work-anticheat.png",
-            link:  "files/work/anticheat-method-demo.pdf"
+            link:  "files/work/quagent-onepage.pdf"
         }
+        // Subsidy Abuse Analysis — Method Demo 已撤下展示入口，保留原文件。
     ],
 
     // ---- Blog 页面 ----

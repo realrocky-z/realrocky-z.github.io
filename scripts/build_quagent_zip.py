@@ -1,158 +1,121 @@
 #!/usr/bin/env python3
-"""构建可下载的只读取数助手完整项目。
-
-用法：
-  python scripts/build_quagent_zip.py
-  python scripts/build_quagent_zip.py --source "D:/.../quagent" --out files/work/quagent-local.zip
+"""Rebuild an inspected archive in place without importing bundled code.
+Use --archive PATH. Backups go outside the repository; output is validated first.
 """
-
 import argparse
-import gzip
+import ast
+import csv
 import io
-import json
-import sys
-import zipfile
+import re
+import shutil
+import tempfile
 from pathlib import Path
+from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
-SITE = Path(__file__).resolve().parent.parent
-DEFAULT_SOURCE = Path(
-    "D:/弘(系统)/Documents/实实习习/业务能力1-大数据（SQL、Hive、Spark）"
-    "/求职准备/quagent"
-)
-DEFAULT_OUT = SITE / "files" / "work" / "quagent-local.zip"
-DEMO_GZ = SITE / "work" / "quagent" / "data" / "anticheat-demo.db.gz"
+README = '''# SQL 练习台与只读取数工具
 
-ROOT_DOCS = ["BUILD.md", "DEMO.md", "README.md", "PRIVACY_AND_REVIEW.md"]
-SERVER_FILES = ["mcp_server.py", "smoke_mcp.py", "instructions.md"]
-SCENARIO_FILES = [
-    "generate_data.py",
-    "build_questions.py",
-    "questions.csv",
-    "metrics.md",
-    "labels.csv",
-]
-HARNESS_FILES = ["cordis.snippet.yml", "install.md"]
-EVAL_FILES = ["check_answers.py", "errors.md", "scoreboard.md", "answers/Q01.sql"]
-
-START_HERE = """# 只读取数助手 · 本地完整项目
-
-这个包里的 `quagent/` 是真正的取数助手。模型通过 MCP 调用六个只读工具，可以回答任意业务问题；`questions.csv` 里的 24 道题只是评测集。
-
-## 目录
-
-- `quagent/server/` 是 MCP 服务器，暴露 `get_scenario`、`get_schema`、`search_columns`、`get_metrics`、`validate_sql`、`run_sql` 六个工具。
-- `quagent/scenario/` 是场景说明、指标定义、题库，以及一份 6 张表的示例库 `anticheat.db`。
-- `workbench/sqlkit.py` 是查询护栏，必须和 `quagent/` 保持同级，服务器启动时会按相对路径找到它。
-- `quagent/harness/` 是挂载到 Harness 的配置片段和步骤。
-- `quagent/eval/` 是评分脚本与当前进度。
+这是一个使用合成数据的本地 MCP 项目，不包含模型或 API 凭据。在线练习台与本地工具是两个使用入口。
 
 ## 运行
 
-需要 Python 3.11 或更高版本。
+需要 Python 3.11 或更新版本。在解压后的项目根目录运行：
 
-1. 安装依赖。
+```bash
+python -m pip install "mcp[cli]"
+python quagent/server/smoke_mcp.py
+```
 
-   ```bash
-   python -m pip install "mcp[cli]"
-   ```
+自测通过说明工具层的列举、查询和示例拒绝测试通过，不代表所有查询正确。
 
-2. 自测工具层。
+在支持 MCP 的客户端里配置 stdio 服务：命令为 `python`，参数为你自己电脑上 `quagent/server/mcp_server.py` 的路径。不要将完成配置后的私人路径或凭据提交到公开仓库。
 
-   ```bash
-   python quagent/server/smoke_mcp.py
-   ```
+## 包含什么
 
-   看到 `ALL PASS` 说明只读工具、写操作拦截和多语句拦截都正常。
+- `quagent/server/`：查看场景、表结构、搜索字段、指标定义、检查 SQL 和执行查询的六项工具。
+- `quagent/scenario/`：六张表的合成 SQLite 数据库、指标文档、24 道题及数据生成脚本。示例库不含 events 表。
+- `workbench/sqlkit.py`：语句检查、只读连接、返回行数与超时控制。
+- `quagent/eval/`：结果比对脚本和历史提交记录。历史记录只包含 Q01，不应解释为模型已经答对全部题目。
 
-3. 挂载到 Harness。打开 `quagent/harness/install.md`，把 `cordis.snippet.yml` 里的路径改成你解压后的实际路径，追加到配置里，重启 Harness。
+本地 run_sql 默认返回 100 行，最多 200 行，超时设置为 5 秒。使用前请核对指标口径；可执行的 SQL 也可能答错问题。
 
-4. 在 Harness 里直接问业务问题，例如「上周各城市净 GMV 是多少」。模型会先读场景和指标，再写 SQL，先校验再执行。
+## 数据与验证
 
-## 关于示例库
+所有数据均为合成数据，不含真实业务记录。SQLite 不等同于 Hive 或 Spark，规则命中不等于确认作弊。
 
-示例库删掉了 `events` 表，把体积压到约 3.5MB，24 道题都不依赖它。需要完整的行为日志时，在 `quagent/` 目录运行：
+Q20 按 gmv 字段统计商品原价；Q21 按 user_id 去重统计命中用户，不能统计用户与小时组合数。当前数据上，命中用户为 159，命中小时内订单为 1643。
+
+24 题在当前数据上的结果值已用独立 Python 聚合复算。该检查不覆盖所有边界数据、并列排序或模型作答能力。历史提交记录保留原样，不把参考查询冒充用户提交。
+
+## 重新生成数据
+
+在 `quagent/` 目录运行下面的命令会覆盖数据库，仅在保留备份后使用：
 
 ```bash
 python scenario/generate_data.py --db scenario/anticheat.db --seed 20261105 --force
+python scenario/build_questions.py --db scenario/anticheat.db
 ```
 
-随机种子固定，重建后数据与原项目一致。`--force` 会覆盖当前的示例库。
+## 使用示例
 
-## 边界
+先查看场景和指标定义，再检查并执行：
 
-数据全部为合成数据。规则命中不等于确认作弊。SQLite 方言不是 Hive/Spark，日期函数和分区写法迁移时要改写。
-"""
+```sql
+SELECT city, COUNT(*) AS orders,
+       ROUND(SUM(pay_amt - refund_amt), 2) AS net_gmv
+FROM orders
+WHERE order_ts >= '2026-10-26' AND order_ts < '2026-11-02'
+  AND status = 'delivered'
+GROUP BY city
+ORDER BY net_gmv DESC;
+```
 
+这里按订单表 city 分组；若题目指定用户所在城市，应关联 users 表。比对是比较结果表，不是比较 SQL 文本，也不是对业务结论的保证。
+'''
+INSTALL = '''# MCP 客户端接入
 
-def zip_info(name):
-    info = zipfile.ZipInfo(name, date_time=(2026, 11, 15, 0, 0, 0))
-    info.compress_type = zipfile.ZIP_DEFLATED
-    info.external_attr = 0o644 << 16
-    return info
-
-
-def add_bytes(zf, name, data):
-    zf.writestr(zip_info(name), data, compresslevel=9)
-
-
-def add_file(zf, base, rel, arcname=None):
-    path = base / rel
-    if not path.is_file():
-        raise FileNotFoundError(path)
-    add_bytes(zf, "quagent-local/" + (arcname or rel), path.read_bytes())
-
-
-def filtered_schema(source):
-    doc = json.loads((source / "scenario" / "schema_doc.json").read_text(encoding="utf-8"))
-    doc["tables"].pop("events", None)
-    doc["join_keys"] = [k for k in doc["join_keys"] if not k.startswith("events.")]
-    return json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8")
-
-
-def build(source, out):
-    if not source.is_dir():
-        raise SystemExit("源目录不存在：" + str(source))
-    if not DEMO_GZ.is_file():
-        raise SystemExit("示例库不存在：" + str(DEMO_GZ))
-
-    out.parent.mkdir(parents=True, exist_ok=True)
-    db_bytes = gzip.decompress(DEMO_GZ.read_bytes())
-
-    with zipfile.ZipFile(out, "w") as zf:
-        add_bytes(zf, "quagent-local/START_HERE.md", START_HERE.encode("utf-8"))
-        for name in ROOT_DOCS:
-            add_file(zf, source, name)
-        for name in SERVER_FILES:
-            add_file(zf, source, "server/" + name, "quagent/server/" + name)
-        for name in SCENARIO_FILES:
-            add_file(zf, source, "scenario/" + name, "quagent/scenario/" + name)
-        add_bytes(zf, "quagent-local/quagent/scenario/schema_doc.json", filtered_schema(source))
-        add_bytes(zf, "quagent-local/quagent/scenario/anticheat.db", db_bytes)
-        for name in HARNESS_FILES:
-            add_file(zf, source, "harness/" + name, "quagent/harness/" + name)
-        for name in EVAL_FILES:
-            add_file(zf, source, "eval/" + name, "quagent/eval/" + name)
-        add_file(zf, source.parent, "workbench/sqlkit.py")
-
-    return out
-
-
+从解压根目录安装依赖并运行 START_HERE.md 中的自测命令。
+在客户端自己的配置界面添加 stdio MCP 服务：命令 python，参数为解压后 quagent/server/mcp_server.py 的本机路径。
+不同客户端配置格式可能不同，请依其官方文档配置。本包不附带个人电脑配置或凭据。
+'''
+PATH = re.compile(r'(?<![A-Za-z0-9])[A-Za-z]:[/\\]|/Users/|/home/')
+PRIVATE = ['求职准备','严肃的工作区','弘(系统)','实实习习']
+TEXT={'.md','.py','.json','.csv','.yml','.txt'}
 def main():
-    parser = argparse.ArgumentParser(description="构建 quagent-local.zip")
-    parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
-    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    args = parser.parse_args()
-
-    out = build(args.source, args.out)
-    size = out.stat().st_size
-    with zipfile.ZipFile(out) as zf:
-        names = zf.namelist()
-    print("写出 " + str(out))
-    print("文件数 %d，大小 %.1f MB" % (len(names), size / 1048576))
-    for name in names:
-        print("  " + name)
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+    ap=argparse.ArgumentParser();ap.add_argument('--archive',type=Path,required=True);args=ap.parse_args()
+    source=args.archive
+    backup=Path(tempfile.mkdtemp(prefix='quagent-backup-'))/'original.zip';shutil.copy2(source,backup)
+    entries=[]
+    with ZipFile(source) as z:
+        for n in z.namelist():
+            data=z.read(n)
+            if n.endswith(('/README.md','/START_HERE.md','/DEMO.md')):data=README.encode()
+            elif n.endswith('/harness/install.md'):data=INSTALL.encode()
+            elif n.endswith('/harness/cordis.snippet.yml'):
+                data=b'# Configure command python and the extracted server path in your own MCP client.\n'
+            elif n.endswith('/eval/errors.md'):
+                data=b'# Historical development notes excluded from the public package.\n'
+            elif n.endswith('/server/instructions.md'):
+                data='''使用合成数据回答当前场景问题。先查看场景、表结构和指标定义，确认时间范围与统计粒度。先调用 validate_sql，再调用 run_sql。保留只读约束；结果截断时应说明限制，不得把规则命中说成确认作弊。不要请求凭据或修改数据库。'''.encode()
+            elif n.endswith('/scenario/build_questions.py'):
+                s=data.decode();s=s.replace('ROUND(SUM(o.pay_amt), 2) AS gmv','ROUND(SUM(o.gmv), 2) AS gmv').replace('ROUND(SUM(o.pay_amt) / (SELECT SUM(pay_amt) FROM orders), 4) AS share','ROUND(SUM(o.gmv) / (SELECT SUM(gmv) FROM orders), 4) AS share').replace('SELECT COUNT(*) AS users, SUM(n) AS orders','SELECT COUNT(DISTINCT user_id) AS users, SUM(n) AS orders');data=s.encode()
+            elif n.endswith('/scenario/questions.csv'):
+                rows=list(csv.DictReader(io.StringIO(data.decode('utf-8-sig'))));fields=list(rows[0])
+                for row in rows:
+                    if row['id']=='Q20':row['golden_sql']=row['golden_sql'].replace('o.pay_amt','o.gmv').replace('SUM(pay_amt)','SUM(gmv)')
+                    if row['id']=='Q21':row['golden_sql']=row['golden_sql'].replace('COUNT(*) AS users','COUNT(DISTINCT user_id) AS users')
+                stream=io.StringIO();w=csv.DictWriter(stream,fieldnames=fields);w.writeheader();w.writerows(rows);data=stream.getvalue().encode()
+            elif n.endswith('/eval/check_answers.py'):
+                s=data.decode();s=s.replace('return out.get("columns", []), out.get("rows", []), ""','if out.get("truncated"):\n        return None, None, "Result truncated; full comparison unavailable"\n    return out.get("columns", []), out.get("rows", []), ""');s=s.replace('args.golden,','Path(args.golden).name,');data=s.encode()
+            if Path(n).suffix in TEXT:
+                s=data.decode()
+                if PATH.search(s) or any(x in s for x in PRIVATE):raise SystemExit('Private marker in '+n)
+                if n.endswith('.py'):ast.parse(s)
+            entries.append((n,data))
+    dest=source.with_suffix('.new.zip')
+    if dest.exists():raise SystemExit('Output exists')
+    with ZipFile(dest,'w',ZIP_DEFLATED) as z:
+        for n,data in entries:
+            i=ZipInfo(n,(2026,11,16,0,0,0));i.compress_type=ZIP_DEFLATED;i.external_attr=0o644<<16;z.writestr(i,data)
+    with ZipFile(dest) as z:assert z.testzip() is None
+    dest.replace(source);print('Rebuilt archive:',len(entries),'files; text privacy and syntax gates passed')
+if __name__=='__main__':main()

@@ -1,4 +1,5 @@
 /* sql.js 执行单元：只读编译、限行执行、错误回传。 */
+importScripts("copy.js");
 importScripts("../vendor/sql-wasm.js");
 
 var SQL = null;
@@ -12,6 +13,14 @@ var ready = initSqlJs({
 
 function reply(id, ok, payload) {
     self.postMessage({ id: id, ok: ok, payload: payload });
+}
+
+function copyText(key, fallback, values) {
+    var group = self.QUAGENT_COPY ? self.QUAGENT_COPY.worker || null : null;
+    var template = group && typeof group[key] === "string" ? group[key] : fallback;
+    return template.replace(/\{(\w+)\}/g, function (_, name) {
+        return values && values[name] != null ? values[name] : "";
+    });
 }
 
 self.onmessage = async function (event) {
@@ -31,7 +40,7 @@ self.onmessage = async function (event) {
         }
 
         if (!db) {
-            reply(id, false, { error: "示例数据还没有加载。" });
+            reply(id, false, { error: copyText("noData", "示例数据还没有加载。") });
             return;
         }
 
@@ -70,7 +79,9 @@ self.onmessage = async function (event) {
             return;
         }
 
-        reply(id, false, { error: "未知命令：" + msg.cmd });
+        reply(id, false, {
+            error: copyText("unknownCommand", "未知命令：{cmd}", { cmd: msg.cmd })
+        });
     } catch (err) {
         reply(id, false, { error: err && err.message ? err.message : String(err) });
     }

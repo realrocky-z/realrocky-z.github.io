@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能取数助手（SQL）【Online SQL 学习测试版】</title>
+    <title data-copy="meta.title">智能取数助手（SQL）｜在线练习</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,42 +13,30 @@
 <body class="lab-page">
 
 <header class="lab-nav">
-    <a class="lab-back" href="../../index.html#work">← The Workshop</a>
-    <span class="lab-nav-title">智能取数助手（SQL）<span class="nav-suffix">【Online SQL 学习测试版】</span></span>
-    <a class="lab-pdf" href="../../files/work/quagent-workbench.pdf" target="_blank" rel="noopener">一页纸说明（PDF）</a>
+    <a class="lab-back" href="../../index.html#work" data-copy="meta.back">← The Workshop</a>
+    <span class="lab-nav-title"><span data-copy="meta.navTitle">智能取数助手（SQL）</span><span class="nav-suffix" data-copy="meta.navSuffix"> · 在线练习</span></span>
+    <a class="lab-pdf" href="../../files/work/quagent-onepage.pdf" target="_blank" rel="noopener" data-copy="meta.pdf">一页纸说明（PDF）</a>
 </header>
 
 <main class="lab-main">
 
     <section class="lab-hero">
-        <p class="lab-kicker">可以自己试一遍 · 全部使用模拟数据</p>
-        <h1>模型写的 SQL，怎么敢直接拿去跑数？</h1>
-        <p class="lab-lead">
-            运营问一句「上周各城市净 GMV」，模型几秒就能写出一条 SQL。它可能把 GMV 当成净 GMV，
-            可能不带时间过滤扫完整张订单表，也可能顺手带上 <code>DROP TABLE</code>。净 GMV 要扣掉退款，
-            这个口径不进提示词，进工具和文档。模型可以用，但只能在六个只读动作里用，写错或写危险都跑不起来。
-        </p>
-        <ol class="lab-steps">
-            <li><strong>先把每个指标怎么算写清楚。</strong>净 GMV、订单数、用户规模各自怎么算，先写成文档，模型读过之后再写 SQL。</li>
-            <li><strong>只给模型六个固定动作。</strong>模型拿不到数据库连接，只能用 MCP 暴露的六个只读工具取数。</li>
-            <li><strong>执行之前先检查一遍。</strong>页面只允许一条只读查询。写操作和一次提交多条语句都会被拒绝，执行时最多返回 200 行，超过 5 秒就中止。</li>
-            <li><strong>执行完和标准答案对一遍。</strong>先看列数，再逐行比较数值。两个数字相差不超过 0.01 就算一致，不一致时指出第一处不同的地方。</li>
-        </ol>
-        <p class="lab-baseline">这 24 道练习都来自同一个模拟的业务场景，每道题都配了一条标准答案。目前我人工验证了第 1 题（Q01），另外 10 条自动检查全部通过。</p>
-        <p class="lab-position">
-            这个页面本身不调用模型。你写 SQL，它在浏览器里执行，再按结果集和标准答案比对，所以它是一个评测台。
-            真正的取数助手由模型和六个只读工具组成，完整项目在右侧下载，本地接入 Harness 后可以问任意业务问题。
-        </p>
+        <p class="lab-kicker" data-copy="hero.kicker">合成数据 · 在线练习与本地工具</p>
+        <h1 data-copy="hero.title">智能取数助手（SQL）</h1>
+        <p class="lab-lead" data-copy-html="hero.leadHtml">我把一组业务场景题做成了浏览器里的 SQL 练习台，同时为本地项目提供查看表结构、指标口径和执行只读查询的工具。两者使用合成数据，重点是练习从问题到查询的过程。</p>
+        <ol class="lab-steps" id="hero-steps"></ol>
+        <p class="lab-baseline" data-copy="hero.baseline">24 道题在当前数据上的结果值已用独立 Python 聚合复算，并修正 Q20 的 GMV 字段和 Q21 的用户去重。验证不覆盖所有边界数据或模型作答能力；下载包的历史提交记录仍仅包含 Q01。</p>
+        <p class="lab-position" data-copy="hero.position">在线页面不调用模型，SQL 在浏览器内执行。本地项目另提供六个 MCP 工具，接入支持 MCP 的客户端后可由模型调用。在线练习和本地取数是两个使用入口。</p>
         <details class="lab-howto">
-            <summary>怎么用？</summary>
-            <p>先点「加载示例数据」，再从左边挑一道题，在中间写 SQL，最后点「执行」。执行完会自动和标准答案比对。右边还会列出六张表、表之间的关联，以及每个指标怎么算。</p>
+            <summary data-copy="hero.howto.summary">开始练习</summary>
+            <p data-copy="hero.howto.body">加载示例数据后选择一道题，在编辑器中编写 SQL，点击「执行」查看结果。侧栏提供表结构、关联关系与指标定义；需要对照时可以查看参考写法。</p>
         </details>
     </section>
 
-    <nav class="lab-tabs" aria-label="页面分区">
-        <button class="lab-tab active" data-tab="workbench" aria-selected="true">做题</button>
-        <button class="lab-tab" data-tab="scenario" aria-selected="false">数据和指标</button>
-        <button class="lab-tab" data-tab="safety" aria-selected="false">怎么审查 AI 代码</button>
+    <nav class="lab-tabs" data-copy-aria="tabs.aria" aria-label="页面分区">
+        <button class="lab-tab active" data-tab="workbench" aria-selected="true" data-copy="tabs.workbench">做题</button>
+        <button class="lab-tab" data-tab="scenario" aria-selected="false" data-copy="tabs.scenario">数据和指标</button>
+        <button class="lab-tab" data-tab="safety" aria-selected="false" data-copy="tabs.safety">查询限制与验证</button>
     </nav>
 
     <section class="lab-panel active" id="tab-workbench">
@@ -56,78 +44,78 @@
 
             <aside class="q-panel">
                 <div class="q-head">
-                    <h2>练习题</h2>
+                    <h2 data-copy="workbench.questionsTitle">练习题</h2>
                     <span id="progress-label">0/24</span>
                 </div>
-                <p class="q-sub">24 道题来自同一个模拟场景。写 SQL，执行后按结果集和标准答案比对。</p>
-                <select id="q-select" class="q-select" aria-label="选择题目"></select>
+                <p class="q-sub" data-copy="workbench.questionsSub">24 道题来自同一个模拟场景。写 SQL，执行后按结果集和标准答案比对。</p>
+                <select id="q-select" class="q-select" data-copy-aria="workbench.selectAria" aria-label="选择题目"></select>
                 <div id="q-list" class="q-list"></div>
-                <button id="btn-reset-progress" class="link-btn">清空做题记录</button>
+                <button id="btn-reset-progress" class="link-btn" data-copy="workbench.reset">清空做题记录</button>
             </aside>
 
             <section class="editor-panel">
                 <div class="q-detail">
                     <div class="q-meta" id="q-meta"></div>
-                    <h2 id="q-title">正在加载题目…</h2>
+                    <h2 id="q-title" data-copy="workbench.loadingTitle">正在加载题目…</h2>
                     <p id="q-text"></p>
                 </div>
 
-                <textarea id="sql-editor" spellcheck="false" aria-label="SQL 编辑器" placeholder="在这里写一条查询，比如 SELECT city, COUNT(*) AS orders FROM orders GROUP BY city;"></textarea>
+                <textarea id="sql-editor" spellcheck="false" data-copy-aria="workbench.editorAria" aria-label="SQL 编辑器" data-copy-placeholder="workbench.placeholder" placeholder="在这里写一条查询，比如 SELECT city, COUNT(*) AS orders FROM orders GROUP BY city;"></textarea>
 
                 <div class="editor-bar">
-                    <button id="btn-validate" class="lab-btn">检查</button>
-                    <button id="btn-run" class="lab-btn primary">执行</button>
-                    <button id="btn-clear" class="lab-btn ghost">清空</button>
-                    <button id="btn-solution" class="lab-btn ghost">参考写法</button>
-                    <span id="db-status" class="db-status">示例数据未加载</span>
+                    <button id="btn-validate" class="lab-btn" data-copy="workbench.buttons.validate">检查</button>
+                    <button id="btn-run" class="lab-btn primary" data-copy="workbench.buttons.run">执行</button>
+                    <button id="btn-clear" class="lab-btn ghost" data-copy="workbench.buttons.clear">清空</button>
+                    <button id="btn-solution" class="lab-btn ghost" data-copy="workbench.buttons.solution">参考写法</button>
+                    <span id="db-status" class="db-status" data-copy="workbench.dbStatus">示例数据未加载</span>
                 </div>
 
                 <div id="verdict" class="verdict" hidden></div>
 
                 <div id="result-wrap" class="result-wrap">
-                    <p class="empty">点「执行」之后，结果会显示在这里。</p>
+                    <p class="empty" data-copy="workbench.resultEmpty">点「执行」之后，结果会显示在这里。</p>
                 </div>
             </section>
 
             <aside class="side-panel">
                 <div class="load-card" id="load-card">
-                    <h3>示例数据</h3>
-                    <p id="load-note">六张表，压缩后大约 3.5MB。第一次点加载会下载这份数据，之后查询都在浏览器里完成，不会发到任何服务器。</p>
-                    <button id="btn-load" class="lab-btn primary">加载示例数据</button>
+                    <h3 data-copy="sidebar.load.title">示例数据</h3>
+                    <p id="load-note" data-copy="sidebar.load.note">六张表，压缩后大约 3.5MB。第一次点加载会下载这份数据，之后查询都在浏览器里完成，不会发到任何服务器。</p>
+                    <button id="btn-load" class="lab-btn primary" data-copy="sidebar.load.button">加载示例数据</button>
                 </div>
 
                 <div class="side-block download-block">
-                    <h3>完整项目</h3>
-                    <p class="download-lead">在线版是评测台，只能在页面上做题。真正的取数助手由模型和六个只读工具组成，完整项目要在本地运行。</p>
-                    <button id="btn-download" class="lab-btn">下载完整项目（约 3.6MB）</button>
+                    <h3 data-copy="sidebar.download.title">完整项目</h3>
+                    <p class="download-lead" data-copy="sidebar.download.lead">在线版用于编写 SQL 和比对结果。本地项目提供六个 MCP 工具，接入支持 MCP 的客户端后可由模型调用。</p>
+                    <button id="btn-download" class="lab-btn" data-copy="sidebar.download.button">下载完整项目（约 3.6MB）</button>
                     <p id="download-status" class="download-status" hidden></p>
                     <details class="download-steps">
-                        <summary>下载后怎么运行</summary>
+                        <summary data-copy="sidebar.download.stepsSummary">下载后怎么运行</summary>
                         <ol>
-                            <li>解压，确认目录里有 <code>quagent/</code> 和 <code>workbench/</code> 两个文件夹。</li>
-                            <li>安装依赖，运行 <code>python -m pip install "mcp[cli]"</code>。</li>
-                            <li>运行 <code>python quagent/server/smoke_mcp.py</code>，看到 <code>ALL PASS</code> 说明工具层正常。</li>
-                            <li>按 <code>quagent/harness/install.md</code> 修改路径并挂到 Harness，重启后就能问任意取数问题。</li>
+                            <li data-copy-html="sidebar.download.steps.0">解压，确认目录里有 <code>quagent/</code> 和 <code>workbench/</code> 两个文件夹。</li>
+                            <li data-copy-html="sidebar.download.steps.1">安装依赖，运行 <code>python -m pip install "mcp[cli]"</code>。</li>
+                            <li data-copy-html="sidebar.download.steps.2">运行 <code>python quagent/server/smoke_mcp.py</code>，看到 <code>ALL PASS</code> 说明工具层正常。</li>
+                            <li data-copy-html="sidebar.download.steps.3">参考 <code>quagent/harness/install.md</code> 配置支持 MCP 的客户端，使用包内场景和工具进行取数。</li>
                         </ol>
                     </details>
-                    <a class="download-fallback" href="../../files/work/quagent-local.zip" download>浏览器不支持进度时，点这里直接下载</a>
+                    <a class="download-fallback" href="../../files/work/quagent-local.zip" download data-copy="sidebar.download.fallback">浏览器不支持进度时，点这里直接下载</a>
                 </div>
 
                 <div class="side-block">
-                    <h3>六张表分别是什么</h3>
+                    <h3 data-copy="sidebar.tables.title">六张表分别是什么</h3>
                     <div id="side-tables" class="side-tables"></div>
-                    <button class="link-btn" data-goto="scenario">查看每张表的全部字段</button>
+                    <button class="link-btn" data-goto="scenario" data-copy="sidebar.tables.all">查看每张表的全部字段</button>
                 </div>
 
                 <div class="side-block">
-                    <h3>表之间怎么关联</h3>
+                    <h3 data-copy="sidebar.joins.title">表之间怎么关联</h3>
                     <ul id="side-joins" class="side-joins"></ul>
                 </div>
 
                 <div class="side-block">
-                    <h3>指标怎么算</h3>
+                    <h3 data-copy="sidebar.metrics.title">指标怎么算</h3>
                     <div id="side-metrics" class="side-metrics"></div>
-                    <button class="link-btn" data-goto="scenario">查看全部指标算法</button>
+                    <button class="link-btn" data-goto="scenario" data-copy="sidebar.metrics.all">查看全部指标算法</button>
                 </div>
             </aside>
 
@@ -135,63 +123,38 @@
     </section>
 
     <section class="lab-panel" id="tab-scenario">
-        <h2 class="section-title">先看数据长什么样</h2>
-        <p class="section-lead">写聚合之前先确认一行代表什么。订单表里一行是一单，设备表里一行是某个账号用过某台设备。同一台设备可以对应多个账号，所以算用户规模时要按 <code>user_id</code> 去重，不能数设备，也不能数订单行。</p>
+        <h2 class="section-title" data-copy="scenario.schema.title">先看数据长什么样</h2>
+        <p class="section-lead" data-copy-html="scenario.schema.leadHtml">写聚合之前先确认一行代表什么。订单表里一行是一单，设备表里一行是某个账号用过某台设备。同一台设备可以对应多个账号，所以算用户规模时要按 <code>user_id</code> 去重，不能数设备，也不能数订单行。</p>
         <div id="schema-grid" class="schema-grid"></div>
 
         <div class="scenario-split">
             <div>
-                <h2 class="section-title">每个指标怎么算</h2>
+                <h2 class="section-title" data-copy="scenario.metrics.title">每个指标怎么算</h2>
                 <div id="metrics-box" class="prose"></div>
             </div>
             <div>
-                <h2 class="section-title">表之间怎么关联，哪里容易算错</h2>
+                <h2 class="section-title" data-copy="scenario.joins.title">表之间怎么关联，哪里容易算错</h2>
                 <div id="joins-box" class="prose"></div>
             </div>
         </div>
 
-        <h2 class="section-title">模型只能用的六个动作</h2>
-        <p class="section-lead">模型不直接连数据库。它想拿数据，只能调用下面六个动作。这六个动作通过 MCP 提供，MCP 是一套让模型调用外部工具的标准接口。每个动作只做一件事，出了问题能定位到具体是哪一个，也能单独替换和测试。</p>
+        <h2 class="section-title" data-copy="scenario.tools.title">本地项目提供的六个工具</h2>
+        <p class="section-lead" data-copy="scenario.tools.lead">下载包通过模型上下文协议（Model Context Protocol，MCP）提供以下接口。模型可调用工具查看场景、表结构与指标定义，再检查或运行查询；在线页面不连接模型。</p>
         <div id="tools-grid" class="tools-grid"></div>
     </section>
 
     <section class="lab-panel" id="tab-safety">
-        <h2 class="section-title">我是怎么审查 AI 写的代码的</h2>
-        <p class="section-lead">我最担心的有两件事。第一件是真实数据被带进外部模型，事后收不回来。第二件是模型生成的代码没人看得完。下面四层分别回答这两个问题，每一层都能在这个项目里找到对应的文件，也能自己跑一遍。</p>
-        <div class="layer-grid">
-            <article class="layer-card">
-                <span class="layer-no">01</span>
-                <h3>数据层</h3>
-                <p>先给数据分级，再决定什么能进模型。真实业务数据默认不进入外部模型。这个项目从第一天就用固定随机种子生成模拟数据，不含真实公司、用户或交易信息，用同一个种子重新生成，还会得到同一份数据。</p>
-                <p class="layer-evidence">可以看 <code>generate_data.py</code>、<code>schema_doc.json</code> 里的免责声明，以及 PDF 本身的加密设置。</p>
-            </article>
-            <article class="layer-card">
-                <span class="layer-no">02</span>
-                <h3>权限层</h3>
-                <p>模型可能写出 <code>DROP</code>、一次提交多条语句，或者一条把数据库拖垮的查询。我没有把安全交给提示词，而是写进了代码。数据库连接设成只读，只放行一条 SELECT，限制返回行数，超过 5 秒中止，并且把每次调用写进日志。模型就算生成了写操作，也执行不了。</p>
-                <p class="layer-evidence">可以看 <code>workbench/sqlkit.py</code>、<code>server/mcp_server.py</code> 和 <code>smoke_mcp.py</code>。</p>
-            </article>
-            <article class="layer-card">
-                <span class="layer-no">03</span>
-                <h3>审查层</h3>
-                <p>AI 写代码比人读代码快，靠「每次都认真看」是撑不住的。所以先让机器跑单元测试、冒烟测试和标准答案比对，人再重点看四类内容，分别是数据权限、SQL 里的指标算法、金额计算和写操作。读不懂的代码不合并。</p>
-                <p class="layer-evidence"><code>eval/check_answers.py</code> 会逐题比对，<code>eval/errors.md</code> 里还记录过一次列顺序写错的问题。</p>
-            </article>
-            <article class="layer-card">
-                <span class="layer-no">04</span>
-                <h3>责任层</h3>
-                <p>出了问题，说「AI 写的」没有意义。AI 是工具，署名的是人。所以数字要回到原报告或数据库核对，密钥不放进提示词，缺口也要主动写出来。比如现在还没有 CI 和依赖许可证扫描，24 道题也只人工做完了 1 道。</p>
-                <p class="layer-evidence">这些缺口写在 <code>DEMO.md</code> 的局限一节，进度写在 <code>eval/scoreboard.md</code>。</p>
-            </article>
-        </div>
+        <h2 class="section-title" data-copy="safety.title">查询限制与验证范围</h2>
+        <p class="section-lead" data-copy="safety.lead">语句检查、只读连接和执行限制用于减少误操作，不能保证指标口径正确。在线版与本地版采用不同的执行方式，下面分别说明。</p>
+        <div class="layer-grid" id="layer-grid"></div>
 
-        <h2 class="section-title">你可以试几条会被拦住的语句</h2>
-        <p class="section-lead">点一条示例，语句会填进编辑器并立刻执行。前四条在 guard 层被拒，不用加载数据。</p>
+        <h2 class="section-title" data-copy="safety.examples.title">查看语句检查示例</h2>
+        <p class="section-lead" data-copy="safety.examples.lead">点击示例会将语句填入编辑器并执行。前四条用于观察执行前的拒绝提示，不需要加载数据；后两条用于观察结果行数与超时限制。</p>
         <div id="examples" class="example-list"></div>
 
-        <h2 class="section-title">操作记录</h2>
-        <p class="section-lead">这个页面只在本地保存最近 30 次操作。原来的项目会把每次工具调用写进 <code>scenario/query-log.jsonl</code>。</p>
-        <div id="audit-box" class="audit-box"><p class="empty">还没有操作。</p></div>
+        <h2 class="section-title" data-copy="safety.audit.title">操作记录</h2>
+        <p class="section-lead" data-copy-html="safety.audit.leadHtml">在线页面在浏览器本地保存最近 30 次操作。本地工具的调用日志写入项目目录下的 <code>scenario/query-log.jsonl</code>。</p>
+        <div id="audit-box" class="audit-box"><p class="empty" data-copy="safety.audit.empty">还没有操作。</p></div>
     </section>
 
 </main>
@@ -204,15 +167,10 @@
     </div>
 </div>
 
-<div id="file-banner" class="file-banner" hidden>
-    <strong>这个页面需要从网站打开。</strong>
-    直接双击本地文件时，浏览器会禁止页面读取数据文件和 Web Worker。线上地址是
-    <code>https://realrocky-z.github.io/work/quagent/</code>。要在本机预览，请在
-    <code>个人主页/</code> 目录运行 <code>python -m http.server 8765</code>，再访问
-    <code>http://localhost:8765/work/quagent/</code>。
-</div>
+<div id="file-banner" class="file-banner" hidden data-copy-html="banner.html"><strong>这个页面需要从网站打开。</strong> 直接双击本地文件时，浏览器会禁止页面读取数据文件和 Web Worker。线上地址是 <code>https://realrocky-z.github.io/work/quagent/</code>。要在本机预览，请在 <code>个人主页/</code> 目录运行 <code>python -m http.server 8766</code>，再访问 <code>http://localhost:8766/work/quagent/</code>。</div>
 
 <script src="vendor/fflate.min.js"></script>
+<script src="js/copy.js"></script>
 <script src="js/guard.js"></script>
 <script src="js/compare.js"></script>
 <script src="js/app.js"></script>
