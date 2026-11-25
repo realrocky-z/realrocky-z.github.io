@@ -3,6 +3,7 @@ title: 把Bayesian Inference用在UQ或许是个好想法，但可能不够。
 date: 2026-10-23
 summary: '分享发表在会议ICLR 2026上的一篇关于Prompt的UQ的文章（Brendan Leigh Ross, Noël Vouitsis, et al. *Textual Bayes: Quantifying Prompt Uncertainty in LLM-Based Systems.* ICLR 2026.），聊聊他的想法以及问题'
 tags: [论文分享]
+draft: true
 ---
 ## 0、基础知识
 假设读者已经了解贝叶斯推断的一些技术，以及粗略知道大模型是怎么工作的。先说说Propmt 的 UQ 吧。

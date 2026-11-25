@@ -7,7 +7,7 @@
       --title "标题" --desc "简介" --section notes --tags 统计,课程
 
 Blog 文章会复制到 blog/ 并立即重新构建文章页与列表。
-PDF 会做 AES-256 文件级加密，密码从环境变量 SITE_PDF_PASSWORD 读取，
+Notes PDF 不加密；tutoring PDF 保持 AES-256 文件级加密，密码从环境变量 SITE_PDF_PASSWORD 读取，
 或用 --password 传入；密码不会写进网站配置。
 """
 import argparse
@@ -115,7 +115,7 @@ def publish_blog(args):
 def publish_pdf(args):
     src = Path(args.pdf).expanduser().resolve()
     password = args.password or os.environ.get("SITE_PDF_PASSWORD")
-    if not password:
+    if args.section == "tutoring" and not password:
         sys.exit("缺少 PDF 密码：设置环境变量 SITE_PDF_PASSWORD 或传 --password")
     base = re.sub(r"[^a-zA-Z0-9]+", "-", (args.slug or src.stem)).strip("-").lower() or "document"
     dest = FILES_DIR / f"{base}.pdf"
@@ -126,16 +126,21 @@ def publish_pdf(args):
         "file": f"files/{base}.pdf", "image": image,
     })
     if args.dry_run:
-        print(f"[dry-run] 会加密复制到 files/{base}.pdf，并在 config.js 的 {args.section} 中插入：\n{entry}")
+        print(f"[dry-run] 会复制到 files/{base}.pdf，并在 config.js 的 {args.section} 中插入：\n{entry}")
         return
     import fitz
     doc = fitz.open(src)
-    doc.save(dest, encryption=fitz.PDF_ENCRYPT_AES_256, owner_pw=password,
-             user_pw=password, permissions=fitz.PDF_PERM_PRINT)
+    if doc.needs_pass and (not password or not doc.authenticate(password)):
+        sys.exit("输入 PDF 需要正确的 --password 或 SITE_PDF_PASSWORD 才能解锁")
+    if args.section == "notes":
+        doc.save(dest, encryption=fitz.PDF_ENCRYPT_NONE)
+    else:
+        doc.save(dest, encryption=fitz.PDF_ENCRYPT_AES_256, owner_pw=password,
+                 user_pw=password, permissions=fitz.PDF_PERM_PRINT)
     doc.close()
     text = CONFIG.read_text(encoding="utf-8")
     CONFIG.write_text(insert_entry(text, args.section, entry), encoding="utf-8")
-    print(f"已加密复制到 files/{base}.pdf")
+    print(f"已复制到 files/{base}.pdf")
     print(f"已更新 js/config.js 的 {args.section} 数组")
 
 
@@ -149,7 +154,7 @@ def main():
     b.add_argument("--dry-run", action="store_true")
     b.set_defaults(func=publish_blog)
 
-    p = sub.add_parser("pdf", help="加密 PDF 并加入 Learning 卡片")
+    p = sub.add_parser("pdf", help="发布 PDF（Notes 不加密）并加入 Learning 卡片")
     p.add_argument("pdf")
     p.add_argument("--title", required=True)
     p.add_argument("--desc", default="")

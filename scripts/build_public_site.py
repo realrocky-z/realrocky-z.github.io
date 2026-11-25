@@ -2,6 +2,8 @@
 from pathlib import Path
 import shutil
 import re
+import json
+from urllib.parse import unquote
 
 ROOT=Path(__file__).resolve().parent.parent
 OUT=ROOT/'_site_public'
@@ -12,6 +14,13 @@ for name in ['index.html','css','js','assets','blog','files','work']:
     src=ROOT/name
     if src.is_dir():shutil.copytree(src,OUT/name)
     else:shutil.copy2(src,OUT/name)
+# Only indexed Blog pages are public; remove legacy exports and nested backups too.
+index = (ROOT / 'blog' / 'posts.js').read_text(encoding='utf-8')
+posts = json.loads(index.split('window.BLOG_POSTS = ', 1)[1].strip().removesuffix(';'))
+allowed_blog = {'posts.js'} | {unquote(Path(post['url']).name) for post in posts}
+for p in (OUT / 'blog').rglob('*'):
+    if p.is_file() and (p.parent != OUT / 'blog' or p.name not in allowed_blog):
+        p.unlink()
 # No draft artifacts, Markdown sources, tests, local notes, or developer configuration.
 for p in sorted(OUT.rglob('*'),key=lambda x:len(x.parts),reverse=True):
     if not p.is_file():continue

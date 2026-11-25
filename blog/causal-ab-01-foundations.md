@@ -4,7 +4,7 @@ date: 2026-11-13
 summary: 从购物车按钮实验出发，理解假设检验、p 值、置信区间与样本量，以及统计结论和业务决策的区别。
 tags: [Hypothesis Testing, A-B Testing]
 slug: causal-ab-01-foundations
-draft: false
+draft: true
 ---
 
 我们来看一个常见的“按钮颜色”例子：我们开发了一个购物 App，想知道“加入购物车”按钮应该用灰色还是橙色。于是，我们将用户分为两组，让一组看到原来的灰色按钮，另一组看到橙色按钮，并在两周后比较两组的转化率。

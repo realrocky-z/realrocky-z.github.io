@@ -209,7 +209,7 @@
     }
 })();
 
-// ===== Downloads (PDFs are password-protected at file level) =====
+// ===== Downloads =====
 (function () {
     document.addEventListener('click', function (e) {
         var btn = e.target.closest('.btn-download');
