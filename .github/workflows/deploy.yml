@@ -27,7 +27,7 @@ jobs:
       - name: Build public-only artifact
         run: python scripts/build_public_site.py
       - uses: actions/configure-pages@v4
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site_public
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5
